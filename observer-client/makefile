@@ -1,2 +1,2 @@
-observer-client: tinyws/src/*.c tinyws/src/*.h src/*.c
-	gcc tinyws/src/*.c src/*.c -lpthread -o bin/observer-client
+observer-client: tinyws/src/*.c tinyws/src/*.h src/*.cpp
+	g++ tinyws/src/*.c src/*.cpp -lpthread -std=c++11 -o bin/observer-client
