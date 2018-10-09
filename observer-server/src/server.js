@@ -1,6 +1,6 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
-var mysql = require('mysql');
+//var mysql = require('mysql');
 
 var auth_slave = "9xAb3yhJA93hkbOprrw2gG30186km8jg9";
 var auth_userclient = "68hv7Et8gj9fL35g9c8kO3lfoc7j5Klnm";
@@ -12,6 +12,7 @@ function client () {
     this.auth = -1;
     this.state = "";
     this.conn = null;
+    this.mac = null;
     this.index = clients.push(this) - 1;
     return this;
 }
@@ -28,12 +29,13 @@ function generate_uuid () {
     var gr = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     var str = "";
     for(var x = 0; x < 64; x++) {
-        str += Math.floor(Math.random() * gr.length);
+        str += gr[Math.floor(Math.random() * gr.length)];
     }
     return str;
 }
 
 function parse_message (cli, message) {
+    console.log("MESSAGE: " + message + "\n**************************END");
     var jsn = JSON.parse(message);
     if(jsn == null)
         return false;
@@ -46,6 +48,8 @@ function parse_message (cli, message) {
                 cli.type = "TX";
                 cli.state = "AUTHORIZED";
                 cli.auth = 1;
+                cli.mac = jsn['mac'];
+                /*
                 con.query("SELECT * FROM slave WHERE mac_addr='" + jsn['mac'] + "'", function (err, result, fields) {
                     if(err || result.length == 0) {
                         var out_uuid = generate_uuid();
@@ -55,7 +59,7 @@ function parse_message (cli, message) {
                             "cb": "OK_NEW",
                             "uuid": out_uuid
                         };
-                        cli.connection.send(JSON.stringify(jt));
+                        cli.conn.send(JSON.stringify(jt));
                     }
                     else {
                         var uuid = result[0].uni_id;
@@ -65,9 +69,18 @@ function parse_message (cli, message) {
                             "cb": "OK",
                             "uuid": uuid
                         };
-                        cli.connection.send(JSON.stringify(jt));
+                        cli.conn.send(JSON.stringify(jt));
                     }
                 });
+                */
+                // FOR TESTING ---- REMOVE LATER
+                var out_uuid = generate_uuid();
+                var jt = {
+                    "cmd": "AUTH",
+                    "cb": "OK_NEW",
+                    "uuid": out_uuid
+                };
+                cli.conn.send(JSON.stringify(jt));
                 return true;
             }
             else if(jsn['auth'] == auth_userclient) {
@@ -79,12 +92,12 @@ function parse_message (cli, message) {
             }
             else {
                 console.log("Client authorization error. Dropping.");
-                cli.connection.close();
+                cli.conn.close();
                 return true;
             }
         }
         else {
-            cli.connection.send("{\"cmd\":\"AUTH\",\"resp\":-1}");
+            cli.conn.send("{\"cmd\":\"AUTH\",\"resp\":-1}");
             return true;
         }
     }
@@ -95,10 +108,29 @@ function parse_message (cli, message) {
                 
             }
         }
+        // Testing 
+        else if(jsn['cmd'] == "FREEM_TEST") {
+            // Send values to Web Clients
+            for(var x = 0; x < clients.length; x++) {
+                if(clients[x].type == null)
+                    continue;
+                
+                if(clients[x].type == "WB") {
+                    var rt = {
+                        "cmd": "FREEM",
+                        "data": jsn['data'],
+                        "client": clients[x].mac
+                    };
+                    clients[x].conn.send(JSON.stringify(rt));
+                }
+
+            }
+        }
     }
 
 }
 
+/*
 var con = mysql.createConnection({
     host: "localhost",
     user: "observeruser",
@@ -106,11 +138,12 @@ var con = mysql.createConnection({
     database: "observerdb"
 });
 
+
 con.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
 });
-
+*/
 var server = http.createServer(function(request, response) {
 
 });
@@ -130,13 +163,12 @@ wsServer.on('request', function(request) {
 
         }
         else if (message.type === 'utf8') {
-
+            parse_message(cli, message.utf8Data);
         }
         
     });
 
     connection.on('close', function(connection) {
         clients.splice(cli.index, 1);
-        clearInterval(cinterval);
     });
 });
