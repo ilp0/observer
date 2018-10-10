@@ -128,6 +128,7 @@ function parse_message (cli, message) {
 
             if(jsn['type'] == "MEM") {
                 // RECEIVE MEMORY
+                console.log("Client count: " + clients.length);
                 for(var x = 0; x < clients.length; x++) {
                     if(clients[x].type == null)
                         continue;
@@ -140,6 +141,7 @@ function parse_message (cli, message) {
                             "ip": cli.ipaddr
                         };
                         clients[x].conn.send(JSON.stringify(rt));
+                        
                     }
     
                 }
@@ -190,11 +192,8 @@ wsServer = new WebSocketServer({
 });
 
 
-function handle_req (connection) {
-    var cli = new client();
-    cli.conn = connection;
-    connection.id = getUniqueID();
-    connection.on('message', function(message) {
+function handle_on_m (cli) {
+    cli.conn.on('message', function(message) {
         if(message.type === 'binary') {
 
         }
@@ -203,13 +202,19 @@ function handle_req (connection) {
         }
         
     });
-    connection.on('close', function(connection) {
+    cli.conn.on('close', function(connection) {
         console.log("client dc");
         clients.splice(cli.index, 1);
     });
 }
 
+function handle_req (req) {
+    let cli = new client();
+    cli.conn = req.accept(null, req.origin)
+    handle_on_m(cli);
+}
+
 wsServer.on('request', function(request) {
-    var connection = request.accept(null, request.origin);
-    handle_req(connection);
+    
+    handle_req(request);
 });
