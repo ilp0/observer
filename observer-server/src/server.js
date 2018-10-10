@@ -35,7 +35,7 @@ function generate_uuid () {
 }
 
 function parse_message (cli, message) {
-    console.log("MESSAGE: " + message + "\n**************************END");
+    console.log("Message: " + message);
     var jsn = JSON.parse(message);
     if(jsn == null)
         return false;
@@ -88,6 +88,11 @@ function parse_message (cli, message) {
                 cli.type = "WB";
                 cli.state = "AUTHORIZED";
                 cli.auth = 1;
+                var jt = {
+                    "cmd": "AUTH",
+                    "cb": "AUTH_OK"
+                };
+                cli.conn.send(JSON.stringify(jt));
                 return true;
             }
             else {
@@ -119,11 +124,31 @@ function parse_message (cli, message) {
                     var rt = {
                         "cmd": "FREEM",
                         "data": jsn['data'],
-                        "client": clients[x].mac
+                        "client": cli.mac
                     };
                     clients[x].conn.send(JSON.stringify(rt));
                 }
 
+            }
+        }
+        else if(jsn['cmd'] == "DATA") {
+
+            if(jsn['type'] == "MEM") {
+                // RECEIVE MEMORY
+                for(var x = 0; x < clients.length; x++) {
+                    if(clients[x].type == null)
+                        continue;
+                    
+                    if(clients[x].type == "WB") {
+                        var rt = {
+                            "cmd": "FREEM",
+                            "data": jsn['data'],
+                            "mac": cli.mac
+                        };
+                        clients[x].conn.send(JSON.stringify(rt));
+                    }
+    
+                }
             }
         }
     }

@@ -3,11 +3,16 @@
 #include "../tinyws/src/websocket.h"
 #include <array>
 #include <algorithm>
+#include "json.hpp"
+
+#define AUTH_KEY "9xAb3yhJA93hkbOprrw2gG30186km8jg9"
+#define TEST_MAC_ADDR "A0-73-B5-16-00-C0"
 
 struct websocket *w;
-void send_mem () ;
+
 void onmessage (char *data, uint16_t length) {
     printf("%s\n", data);
+    // Parse message here
 }
 
 std::string exec_comm (std::string cmd, int *returncode) {
@@ -39,6 +44,19 @@ std::string exec_comm (std::string cmd, int *returncode) {
     return checked;
 }
 
+void transmit_memory () {
+    json::JSON jm;
+    //std::string ab = exec_comm("free -m |grep Mem", NULL);
+    int total_memory = std::atoi(exec_comm("free -m |grep Mem |awk '{print $2}'", NULL).c_str());
+    int used_memory = std::atoi(exec_comm("free -m |grep Mem |awk '{print $3}'", NULL).c_str());
+    jm["cmd"] = "DATA";
+    jm["type"] = "MEM";
+    jm["data"]["tot"] = total_memory;
+    jm["data"]["used"] = used_memory;
+    std::string o = jm.dump(0, "");
+    WS_send(w, (char*)o.c_str(), o.size(), TEXT);
+}
+
 int main () {
     w = WS((char*)"127.0.0.1", 6152, NULL, NULL, NULL);
     if(w == NULL) {
@@ -46,42 +64,15 @@ int main () {
         return 1;
     }
     w->onmessage = onmessage;
-    const char *auth_message = "{\"cmd\":\"AUTH\",\"auth\":\"9xAb3yhJA93hkbOprrw2gG30186km8jg9\",\"mac\":\"A0-73-B5-16-00-C0\"}";
-    WS_send(w, (char*)auth_message, strlen(auth_message), TEXT);
+    json::JSON jn;
+    jn["cmd"] = "AUTH";
+    jn["auth"] = AUTH_KEY;
+    jn["mac"] = TEST_MAC_ADDR;
+    std::string auth_msg = jn.dump(0, "");
+    WS_send(w, (char*)auth_msg.c_str(), auth_msg.size(), TEXT);
     while(1) {
         sleep(5);
-        std::string outs = "{\"cmd\":\"FREEM_TEST\",\"data\":\"";
-        outs += exec_comm("free -m | grep Mem", NULL);
-        outs += "\"}";
-        WS_send(w, (char*)outs.c_str(), outs.size(), TEXT);
+        transmit_memory();
     }
     return 0;
-}
-
-void send_mem () {
-    /*
-    FILE *fp;
-    char buff[512];
-
-    fp = popen("free -m |grep Mem", "r");
-    if (fp == NULL) {
-        printf("Failed to run command\n" );
-        return;
-    }
-    char c;
-    int n;
-    while ((c = fgetc(fp)) != EOF)
-    {
-        buff[n++] = (char) c;
-    }
-    buff[n] = 0;
-
-    pclose(fp);
-    char fbf[2048] = { 0 };
-    sprintf(fbf, "{\"cmd\":\"FREEM_TEST\",\"data\":\"%s\"}", buff);
-    printf("%s", fbf);
-    */
-
-    const char *t = "{\"cmd\":\"FREEM_TEST\",\"data\":\"Test: 351353151\"}";
-    WS_send(w, (char*)t, strlen(t), TEXT);
 }
