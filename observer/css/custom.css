@@ -1,0 +1,76 @@
+
+  
+  h1 {
+	margin-bottom: 20px;
+	padding-bottom: 9px;
+	border-bottom: 1px solid #eee;
+  }
+
+  
+  /* Sidebar navigation */
+  .sidebar {
+	padding-left: 0.4em;
+	padding-right:  0.4em;
+	border-right: solid 1px white;
+	height:100%;
+  }
+  
+  .sidebar .nav {
+	margin-bottom: 20px;
+  }
+  
+   .nav-item {
+	width: 100%;
+	padding-top:  0.4em;
+	
+  }
+  .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+	  color:white;
+  }
+  .nav-link {
+	color: white;
+  }
+
+  .nav-pills {
+	color: white!important;
+  }
+  
+  .sidebar .nav-item + .nav-item {
+	margin-left: 0;
+  }
+  
+
+  .navbar-light .navbar-brand {
+
+    color:white;
+
+	}
+	.navbar-light .navbar-nav .active > .nav-link, .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link.show, .navbar-light .navbar-nav .show > .nav-link {
+		color: white
+	}
+	.navbar-light .navbar-nav .nav-link {
+
+		color: white;
+	
+	}
+  /*
+   * Dashboard
+   */
+  
+   /* Placeholders */
+  .placeholders {
+	padding-bottom: 3rem;
+  }
+  
+  .placeholder img {
+	padding-top: 1.5rem;
+	padding-bottom: 1.5rem;
+  }
+  
+  .btn-block {
+	  margin: 10px;
+  }
+
+  .main-container {
+	  padding: 0;
+  }
