@@ -113,7 +113,7 @@ int main () {
     std::string auth_msg = jn.dump(0, "");
     WS_send(w, (char*)auth_msg.c_str(), auth_msg.size(), TEXT);
     while(1) {
-        sleep(5);
+        sleep(1);
         transmit_memory();
         transmit_cpu();
     }

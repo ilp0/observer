@@ -18,13 +18,19 @@ function client () {
     return this;
 }
 
-function client_find_index (conn) {
+function client_find_index (connid) {
     for(var x = 0; x < clients.length; x++) {
-        if(clients[x].conn == conn)
+        if(clients[x].conn.id == connid)
             return x;
     }
     return -1;
 }
+function getUniqueID () {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4();
+};
 
 function generate_uuid () {
     var gr = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -130,6 +136,7 @@ function parse_message (cli, message) {
                         var rt = {
                             "cmd": "FREEM",
                             "data": jsn['data'],
+                            "pkey": cli.unid,
                             "ip": cli.ipaddr
                         };
                         clients[x].conn.send(JSON.stringify(rt));
@@ -146,6 +153,7 @@ function parse_message (cli, message) {
                         var rt = {
                             "cmd": "CPU",
                             "data": jsn['data'],
+                            "pkey": cli.unid,
                             "ip": cli.ipaddr
                         };
                         clients[x].conn.send(JSON.stringify(rt));
@@ -182,10 +190,10 @@ wsServer = new WebSocketServer({
 });
 
 
-wsServer.on('request', function(request) {
-    var connection = request.accept(null, request.origin);
+function handle_req (connection) {
     var cli = new client();
     cli.conn = connection;
+    connection.id = getUniqueID();
     connection.on('message', function(message) {
         if(message.type === 'binary') {
 
@@ -195,9 +203,13 @@ wsServer.on('request', function(request) {
         }
         
     });
-
     connection.on('close', function(connection) {
-        console.log("Client disconnected");
+        console.log("client dc");
         clients.splice(cli.index, 1);
     });
+}
+
+wsServer.on('request', function(request) {
+    var connection = request.accept(null, request.origin);
+    handle_req(connection);
 });
