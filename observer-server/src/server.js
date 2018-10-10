@@ -1,6 +1,6 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
-//var mysql = require('mysql');
+var mysql = require('mysql');
 
 var auth_slave = "9xAb3yhJA93hkbOprrw2gG30186km8jg9";
 var auth_userclient = "68hv7Et8gj9fL35g9c8kO3lfoc7j5Klnm";
@@ -12,7 +12,8 @@ function client () {
     this.auth = -1;
     this.state = "";
     this.conn = null;
-    this.mac = null;
+    this.ipaddr = null;
+    this.unid = null;
     this.index = clients.push(this) - 1;
     return this;
 }
@@ -48,39 +49,43 @@ function parse_message (cli, message) {
                 cli.type = "TX";
                 cli.state = "AUTHORIZED";
                 cli.auth = 1;
-                cli.mac = jsn['mac'];
-                /*
-                con.query("SELECT * FROM slave WHERE mac_addr='" + jsn['mac'] + "'", function (err, result, fields) {
-                    if(err || result.length == 0) {
-                        var out_uuid = generate_uuid();
-                        con.query("INSERT INTO slave (mac_addr, ip_addr, unique_id) VALUES ('"+jsn['mac']+"', '"+jsn['ip']+"', '"+out_uuid+"')");
-                        var jt = {
-                            "cmd": "AUTH",
-                            "cb": "OK_NEW",
-                            "uuid": out_uuid
-                        };
-                        cli.conn.send(JSON.stringify(jt));
-                    }
-                    else {
-                        var uuid = result[0].uni_id;
-                        // TODO: Check UUID --
-                        var jt = {
-                            "cmd": "AUTH",
-                            "cb": "OK",
-                            "uuid": uuid
-                        };
-                        cli.conn.send(JSON.stringify(jt));
-                    }
-                });
-                */
-                // FOR TESTING ---- REMOVE LATER
-                var out_uuid = generate_uuid();
-                var jt = {
-                    "cmd": "AUTH",
-                    "cb": "OK_NEW",
-                    "uuid": out_uuid
-                };
-                cli.conn.send(JSON.stringify(jt));
+                var splt_addr = cli.conn.remoteAddress.split(":");
+                cli.ipaddr = splt_addr[splt_addr.length - 1];
+                // Mac address is obsolete
+                // cli.mac = jsn['mac'];
+                if(!jsn['unid']) {
+                    // Old tx
+                    var out_uuid = generate_uuid();
+                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+cli.ipaddr+"', '"+out_uuid+"')");
+                    var jt = {
+                        "cmd": "AUTH",
+                        "cb": "OK_NEW",
+                        "uuid": out_uuid
+                    };
+                    console.log("NEW SLAVE!");
+                    cli.conn.send(JSON.stringify(jt));
+                }
+                else {
+                    cli.unid = jsn['unid'];
+                    con.query("SELECT * FROM slave WHERE uni_id='" + cli.unid + "'", function (err, result, fields) {
+                        if(err || result.length == 0) {
+                            // NOT FOUND -- DROP CLIENT
+                            console.log("FAKE SLAVE! >:(");
+                            cli.conn.close();
+                        }
+                        else {
+                            var uuid = result[0].uni_id;
+                            con.query("UPDATE slave SET ip_addr = '"+cli.ipaddr+"' WHERE uni_id = '" + uuid + "'");
+                            console.log("OLD SLAVE!");
+                            var jt = {
+                                "cmd": "AUTH",
+                                "cb": "OK"
+                            };
+                            cli.conn.send(JSON.stringify(jt));
+                        }
+                    });
+                }
+
                 return true;
             }
             else if(jsn['auth'] == auth_userclient) {
@@ -113,24 +118,6 @@ function parse_message (cli, message) {
                 
             }
         }
-        // Testing 
-        else if(jsn['cmd'] == "FREEM_TEST") {
-            // Send values to Web Clients
-            for(var x = 0; x < clients.length; x++) {
-                if(clients[x].type == null)
-                    continue;
-                
-                if(clients[x].type == "WB") {
-                    var rt = {
-                        "cmd": "FREEM",
-                        "data": jsn['data'],
-                        "client": cli.mac
-                    };
-                    clients[x].conn.send(JSON.stringify(rt));
-                }
-
-            }
-        }
         else if(jsn['cmd'] == "DATA") {
 
             if(jsn['type'] == "MEM") {
@@ -143,7 +130,23 @@ function parse_message (cli, message) {
                         var rt = {
                             "cmd": "FREEM",
                             "data": jsn['data'],
-                            "mac": cli.mac
+                            "ip": cli.ipaddr
+                        };
+                        clients[x].conn.send(JSON.stringify(rt));
+                    }
+    
+                }
+            }
+            else if(jsn['type'] == "CPU") {
+                for(var x = 0; x < clients.length; x++) {
+                    if(clients[x].type == null)
+                        continue;
+                    
+                    if(clients[x].type == "WB") {
+                        var rt = {
+                            "cmd": "CPU",
+                            "data": jsn['data'],
+                            "ip": cli.ipaddr
                         };
                         clients[x].conn.send(JSON.stringify(rt));
                     }
@@ -155,7 +158,7 @@ function parse_message (cli, message) {
 
 }
 
-/*
+
 var con = mysql.createConnection({
     host: "localhost",
     user: "observeruser",
@@ -168,7 +171,7 @@ con.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
 });
-*/
+
 var server = http.createServer(function(request, response) {
 
 });
@@ -194,6 +197,7 @@ wsServer.on('request', function(request) {
     });
 
     connection.on('close', function(connection) {
+        console.log("Client disconnected");
         clients.splice(cli.index, 1);
     });
 });

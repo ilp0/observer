@@ -3,6 +3,7 @@
 #include "../tinyws/src/websocket.h"
 #include <array>
 #include <algorithm>
+#include <fstream>
 #include "json.hpp"
 
 #define AUTH_KEY "9xAb3yhJA93hkbOprrw2gG30186km8jg9"
@@ -13,6 +14,22 @@ struct websocket *w;
 void onmessage (char *data, uint16_t length) {
     printf("%s\n", data);
     // Parse message here
+    json::JSON jns = json::JSON::Load(std::string(data));
+    if(jns.hasKey("cmd")) {
+        if(jns["cmd"].ToString() == "AUTH") {
+            if(jns["cb"].ToString() == "OK_NEW") {
+                std::ofstream f;
+                f.open(".obsc_conf");
+                f << jns["uuid"].ToString();
+                f.close();
+            }
+        }
+    }
+}
+
+bool file_exists(const char *fileName) {
+    std::ifstream infile(fileName);
+    return infile.good();
 }
 
 std::string exec_comm (std::string cmd, int *returncode) {
@@ -57,6 +74,17 @@ void transmit_memory () {
     WS_send(w, (char*)o.c_str(), o.size(), TEXT);
 }
 
+void transmit_cpu () {
+    json::JSON jm;
+    //std::string ab = exec_comm("free -m |grep Mem", NULL);
+    float total_usg = std::atof(exec_comm("awk -v a=\"$(awk '/cpu /{print $2+$4,$2+$4+$5}' /proc/stat; sleep 1)\" '/cpu /{split(a,b,\" \"); print 100*($2+$4-b[1])/($2+$4+$5-b[2])}'  /proc/stat", NULL).c_str());
+    jm["cmd"] = "DATA";
+    jm["type"] = "CPU";
+    jm["data"]["us"] = total_usg;
+    std::string o = jm.dump(0, "");
+    WS_send(w, (char*)o.c_str(), o.size(), TEXT);
+}
+
 int main () {
     w = WS((char*)"127.0.0.1", 6152, NULL, NULL, NULL);
     if(w == NULL) {
@@ -64,15 +92,30 @@ int main () {
         return 1;
     }
     w->onmessage = onmessage;
+    
     json::JSON jn;
     jn["cmd"] = "AUTH";
     jn["auth"] = AUTH_KEY;
     jn["mac"] = TEST_MAC_ADDR;
+    if(file_exists(".obsc_conf")) {
+        std::string unikey = "";
+        std::ifstream is(".obsc_conf");
+
+        char c;
+        while (is.get(c)) {
+            if(c == '\n' || c == '\t' || c == ' ')
+                continue;
+            unikey += c;
+        }
+        jn["unid"] = unikey;
+
+    }
     std::string auth_msg = jn.dump(0, "");
     WS_send(w, (char*)auth_msg.c_str(), auth_msg.size(), TEXT);
     while(1) {
         sleep(5);
         transmit_memory();
+        transmit_cpu();
     }
     return 0;
 }
