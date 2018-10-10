@@ -16,7 +16,7 @@ function slave (ip) {
 	return this;
 }
 
-var ws = new WebSocket("ws://localhost:6152");
+var ws = new WebSocket("ws://84.250.89.146:6152");
 ws.onopen = function (event){
 	var jt = {
 		"cmd": "AUTH",
@@ -28,7 +28,7 @@ ws.onmessage = function (event) {
 	var jn = JSON.parse(event.data);
 	
 	if(jn['ip']) {
-		console.log("yes");
+		console.log("y");
 		var slv = null;
 		for(var x = 0; x < slaves.length; x++) {
 			if(slaves[x].ip == jn['ip']) {
@@ -36,12 +36,24 @@ ws.onmessage = function (event) {
 				break;
 			}
 		}
+
+		/*
+		<div class="card">
+                      <div class="card-header">
+                        Sample
+                      </div>
+                      <div class="card-body">
+                          <p>CPU : 54%</p>
+                          <p>MEM : 1.44GB/15.4GB</p>
+                      </div>
+					</div>
+					*/
 		if(slv == null) {
 			slv = new slave(jn['ip']);
-			$("#slaves").append("<div class='device' id='device_" + slv.id+ "'> <h3> " + slv.ip + " </h3> </div>");
-			$("#device_" + slv.id).append("Memory: <span class='mem_used'>" + (slv.mem.used/1000).toFixed(2) + "</span>GB/<span class='mem_total'>" + (slv.mem.total/1000).toFixed(2) + "</span>GB<br/>");
-			$("#device_" + slv.id).append("CPU: <span class='cpu_us'>" + (slv.cpu.us).toFixed(2) + "</span>%<br/>");
-
+			$("#slaves").append('<div class="card" id="device_' + slv.id + '"> <div class="card-header"> ' + slv.ip + ' </div>');
+			$("#device_" + slv.id).append("<div class='card-body' id='device_body_" + slv.id + "'>");
+			$("#device_body_" + slv.id).append("Memory: <span class='mem_used'>" + (slv.mem.used/1000).toFixed(2) + "</span>GB/<span class='mem_total'>" + (slv.mem.total/1000).toFixed(2) + "</span>GB<br/>");
+			$("#device_body_" + slv.id).append("CPU: <span class='cpu_us'>" + (slv.cpu.us).toFixed(2) + "</span>%<br/>");
 		}
 		if(jn['cmd'] == "FREEM") {
 			slv.mem.total = jn['data']['tot'];
