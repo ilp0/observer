@@ -30,7 +30,7 @@ ws.onmessage = function (event) {
 	var jn = JSON.parse(event.data);
 	
 	if(jn['ip']) {
-		console.log("y");
+		console.log(event.data);
 		var slv = null;
 		for(var x = 0; x < slaves.length; x++) {
 			if(slaves[x].unid == jn['unid']) {
