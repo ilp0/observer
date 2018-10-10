@@ -35,14 +35,14 @@ ws.onmessage = function (event) {
 		}
 		if(slv == null) {
 			slv = new slave(jn['mac']);
-			$("#slaves").append("<div class='device' id='device_" + slv.rn_numb + "'> <h3> " + slv.mac + " </h3> </div>");
-			$("#device_" + slv.rn_numb).append("Memory: <span class='mem_used'>" + (slv.mem.used/1000) + "</span>GB/<span class='mem_total'>" + (slv.mem.total) + "</span>GB");
+			$("#slaves").append("<div class='device' id='device_" + slv.id+ "'> <h3> " + slv.mac + " </h3> </div>");
+			$("#device_" + slv.id).append("Memory: <span class='mem_used'>" + (slv.mem.used/1000) + "</span>GB/<span class='mem_total'>" + (slv.mem.total) + "</span>GB");
 		}
 		if(jn['cmd'] == "FREEM") {
 			slv.mem.total = jn['data']['tot'];
 			slv.mem.used = jn['data']['used'];
-			$("#device_" + slv.rn_numb).find(".mem_used").html((slv.mem.used/1000));
-			$("#device_" + slv.rn_numb).find(".mem_total").html((slv.mem.total/1000));
+			$("#device_" + slv.id).find(".mem_used").html((slv.mem.used/1000));
+			$("#device_" + slv.id).find(".mem_total").html((slv.mem.total/1000));
 
 		}
 	}
