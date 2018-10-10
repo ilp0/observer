@@ -28,7 +28,7 @@ ws.onmessage = function (event) {
 	var jn = JSON.parse(event.data);
 	
 	if(jn['ip']) {
-		console.log("y");
+		console.log(event.data);
 		var slv = null;
 		for(var x = 0; x < slaves.length; x++) {
 			if(slaves[x].ip == jn['ip']) {
@@ -66,6 +66,6 @@ ws.onmessage = function (event) {
 			$("#device_" + slv.id).find(".cpu_us").html((slv.cpu.us).toFixed(2));
 		}
 	}
-	document.getElementById("data").innerHTML = event.data;
+	//document.getElementById("data").innerHTML = event.data;
 }
 
