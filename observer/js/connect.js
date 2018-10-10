@@ -29,11 +29,11 @@ ws.onopen = function (event){
 ws.onmessage = function (event) {
 	var jn = JSON.parse(event.data);
 	
-	if(jn['ip']) {
+	if(jn['pkey']) {
 		console.log(event.data);
 		var slv = null;
 		for(var x = 0; x < slaves.length; x++) {
-			if(slaves[x].unid == jn['unid']) {
+			if(slaves[x].unid == jn['pkey']) {
 				slv = slaves[x];
 				break;
 			}
@@ -51,7 +51,7 @@ ws.onmessage = function (event) {
 					</div>
 					*/
 		if(slv == null) {
-			slv = new slave(jn['ip'], jn['unid']);
+			slv = new slave(jn['ip'], jn['pkey']);
 			$("#slaves").append('<div class="card" id="device_' + slv.id + '"> <div class="card-header"> ' + slv.ip + ' </div>');
 			$("#device_" + slv.id).append("<div class='card-body' id='device_body_" + slv.id + "'>");
 			$("#device_body_" + slv.id).append("Memory: <span class='mem_used'>" + (slv.mem.used/1000).toFixed(2) + "</span>GB/<span class='mem_total'>" + (slv.mem.total/1000).toFixed(2) + "</span>GB<br/>");
