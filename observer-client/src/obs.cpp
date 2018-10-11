@@ -4,10 +4,16 @@
 #include <array>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include "json.hpp"
 
 #define AUTH_KEY "9xAb3yhJA93hkbOprrw2gG30186km8jg9"
 #define TEST_MAC_ADDR "A0-73-B5-16-00-C0"
+
+struct tx_conf {
+    std::string ip = "127.0.0.1";
+    int port = 6152;
+} config;
 
 struct websocket *w;
 
@@ -85,8 +91,60 @@ void transmit_cpu () {
     WS_send(w, (char*)o.c_str(), o.size(), TEXT);
 }
 
+bool read_conf () {
+    std::ifstream infile("obs.conf");
+    std::string line;
+    while (std::getline(infile, line))
+    {
+        
+        std::string key = "";
+        std::string value = "";
+        int ix = 0;
+        while(ix < line.size() && (line[ix] == ' ' || line[ix] == '\t')) {
+            if(line[ix] == '#')
+                goto _comment;
+            ix++;
+        }
+        while(ix < line.size() && (line[ix] != ' ' && line[ix] != '\t' && line[ix] != ':')) {
+            if(line[ix] == '#')
+                goto _comment;
+            key += line[ix];
+            ix++;
+        }
+        while(ix < line.size() && (line[ix] == ' ' || line[ix] == '\t' || line[ix] == ':')) {
+            if(line[ix] == '#')
+                goto _comment;
+            ix++;
+        }
+        while(ix < line.size() && (line[ix] != ' ' && line[ix] != '\t' && line[ix] != ':')) {
+            if(line[ix] == '#')
+                goto _comment;
+            value += line[ix];
+            ix++;
+        }
+        _comment:
+        if(key != "") {
+            if(key == "SERVER" || key == "server") {
+                printf("Config: Set server IP to %s\n", value.c_str());
+                config.ip = value;
+                continue;
+            }
+            else if(key == "PORT" || key == "port") {
+                printf("Config: Set server port to %s\n", value.c_str());
+                config.port = std::atoi(value.c_str());
+                continue;
+            }
+            else {
+                printf("Config: Unknown key %s\n", key.c_str());
+            }
+        }
+    }
+    infile.close();
+}
+
 int main () {
-    w = WS((char*)"127.0.0.1", 6152, NULL, NULL, NULL);
+    read_conf();
+    w = WS((char*)config.ip.c_str(), config.port, NULL, NULL, NULL);
     if(w == NULL) {
         printf("WS Connection not established\n");
         return 1;
