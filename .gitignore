@@ -1,2 +1,4 @@
 observer-client/.obsc_config
 observer-client/bin/*
+# ignore obs.conf
+observer-client/obs.conf
