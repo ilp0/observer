@@ -16,6 +16,10 @@ struct tx_conf {
 } config;
 
 struct websocket *w;
+std::string exec_comm (std::string cmd, int *returncode);
+void transmit_service_status (std::string service);
+void transmit_cpu ();
+void transmit_memory ();
 
 void onmessage (char *data, uint16_t length) {
     printf("%s\n", data);
@@ -28,6 +32,11 @@ void onmessage (char *data, uint16_t length) {
                 f.open(".obsc_conf");
                 f << jns["uuid"].ToString();
                 f.close();
+            }
+        }
+        else if(jns["cmd"].ToString() == "REQ") {
+            if(jns["req"].ToString() == "SERVICE_STATUS") {
+                transmit_service_status(jns["service"].ToString());
             }
         }
     }
@@ -87,6 +96,18 @@ void transmit_cpu () {
     jm["cmd"] = "DATA";
     jm["type"] = "CPU";
     jm["data"]["us"] = total_usg;
+    std::string o = jm.dump(0, "");
+    WS_send(w, (char*)o.c_str(), o.size(), TEXT);
+}
+
+void transmit_service_status (std::string service) {
+    json::JSON jm;
+
+    jm["cmd"] = "SERVICE";
+    jm["service"] = service;
+
+    std::string data = exec_comm("systemctl status "+service+" |grep Active: |awk '{print $2}'", NULL);
+    jm["status"] = data;
     std::string o = jm.dump(0, "");
     WS_send(w, (char*)o.c_str(), o.size(), TEXT);
 }

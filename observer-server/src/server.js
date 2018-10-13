@@ -41,8 +41,30 @@ function generate_uuid () {
     return str;
 }
 
+function client_send (message, mode = "ALL") {
+    if(mode == "ALL") {
+        for(var x = 0; x < clients.length; x++) {
+            if(clients[x].type == null)
+                continue;
+        
+            clients[x].conn.send(message);
+
+        }
+    }
+    else if(mode == "WEB") {
+        for(var x = 0; x < clients.length; x++) {
+            if(clients[x].type == null)
+                continue;
+            
+            if(clients[x].type == "WB") {
+                clients[x].conn.send(message);
+            }
+
+        }
+    }
+}
+
 function parse_message (cli, message) {
-    console.log("Message: " + message);
     var jsn = JSON.parse(message);
     if(jsn == null)
         return false;
@@ -118,50 +140,39 @@ function parse_message (cli, message) {
         }
     }
     if(cli.type == "TX") {
-        if(jsn['cmd'] == "SERVICE_STATUS") {
-            if(jsn['services'] == "*") {
-                // Status of all registered services
-                
-            }
-        }
-        else if(jsn['cmd'] == "DATA") {
+        if(jsn['cmd'] == "DATA") {
 
             if(jsn['type'] == "MEM") {
                 // RECEIVE MEMORY
-                console.log("Client count: " + clients.length);
-                for(var x = 0; x < clients.length; x++) {
-                    if(clients[x].type == null)
-                        continue;
-                    
-                    if(clients[x].type == "WB") {
-                        var rt = {
-                            "cmd": "FREEM",
-                            "data": jsn['data'],
-                            "pkey": cli.unid,
-                            "ip": cli.ipaddr
-                        };
-                        clients[x].conn.send(JSON.stringify(rt));
-                        
-                    }
-    
-                }
+                var rt = {
+                    "cmd": "FREEM",
+                    "data": jsn['data'],
+                    "pkey": cli.unid,
+                    "ip": cli.ipaddr
+                };
+                client_send(JSON.stringify(rt), "WEB")
             }
             else if(jsn['type'] == "CPU") {
-                for(var x = 0; x < clients.length; x++) {
-                    if(clients[x].type == null)
-                        continue;
-                    
-                    if(clients[x].type == "WB") {
-                        var rt = {
-                            "cmd": "CPU",
-                            "data": jsn['data'],
-                            "pkey": cli.unid,
-                            "ip": cli.ipaddr
-                        };
-                        clients[x].conn.send(JSON.stringify(rt));
-                    }
-    
-                }
+                
+                var rt = {
+                    "cmd": "CPU",
+                    "data": jsn['data'],
+                    "pkey": cli.unid,
+                    "ip": cli.ipaddr
+                };
+                client_send(JSON.stringify(rt), "WEB");
+            }
+            else if(jsn['type'] == "SERVICE") {
+                var rt = {
+                    "cmd": "SERVICE",
+                    "data": {
+                        "service": jsn['service'],
+                        "status": jsn['status']
+                    },
+                    "pkey": cli.unid,
+                    "ip": cli.ipaddr
+                };
+                client_send(JSON.stringify(rt), "WEB");
             }
         }
     }
