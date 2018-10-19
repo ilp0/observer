@@ -41,7 +41,7 @@ function generate_uuid () {
     return str;
 }
 
-function client_send (message, mode = "ALL") {
+function client_send (message, mode = "ALL", client_id) {
     if(mode == "ALL") {
         for(var x = 0; x < clients.length; x++) {
             if(clients[x].type == null)
@@ -60,6 +60,14 @@ function client_send (message, mode = "ALL") {
                 clients[x].conn.send(message);
             }
 
+        }
+    }
+    else if(mode == "SINGLE") {
+        for(var x = 0; x < clients.length; x++) {
+            if(clients[x].unid == client_id) {
+                clients[x].conn.send(message);
+                break;
+            }
         }
     }
 }
@@ -121,9 +129,11 @@ function parse_message (cli, message) {
                 cli.type = "WB";
                 cli.state = "AUTHORIZED";
                 cli.auth = 1;
+                cli.unid = getUniqueID();
                 var jt = {
                     "cmd": "AUTH",
-                    "cb": "AUTH_OK"
+                    "cb": "AUTH_OK",
+                    "ses_id": cli.unid
                 };
                 cli.conn.send(JSON.stringify(jt));
                 return true;
@@ -174,6 +184,16 @@ function parse_message (cli, message) {
                 };
                 client_send(JSON.stringify(rt), "WEB");
             }
+        }
+    }
+    else if(cli.type == "WB") {
+        if(jsn['cmd'] == "REQ") {
+            var rt = {
+                "cmd": "REQ",
+                "req": jsn['req']
+            };
+            client_send(JSON.stringify(rt), "SINGLE", jsn['pkey']);
+
         }
     }
 
