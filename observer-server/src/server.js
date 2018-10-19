@@ -207,16 +207,17 @@ var con = mysql.createConnection({
     database: "observerdb"
 });
 
-
+console.log("Starting Observer-server...");
+console.log("Date: " + new Date());
 con.connect(function(err) {
     if (err) throw err;
-    console.log("Connected!");
+    console.log("MySQL:     [OK]");
 });
 
 var server = http.createServer(function(request, response) {
 
 });
-server.listen(6152, function() { });
+server.listen(6152, function() { console.log("TCP:      [OK]"); });
 
 wsServer = new WebSocketServer({
     httpServer: server
@@ -244,6 +245,7 @@ function handle_req (req) {
     cli.conn = req.accept(null, req.origin)
     handle_on_m(cli);
 }
+
 
 wsServer.on('request', function(request) {
     
