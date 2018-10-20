@@ -1,21 +1,20 @@
 import React, { Component } from 'react';
 import '../App.css';
-import Server from './ServerCard.js';
+import Server from '../components/ServerCard.js';
 import PropTypes from 'prop-types';
+import {addServerCard} from '../actions'
 
 //map = for each // Käydään läpi jokainen 
-class ServerCardContainer extends Component {
 
-	constructor(props){
-		super(props);
-	}
 
-	render (){
-		return (this.props.cards.map((server, index) =>(
-			<Server id={index} {...server}></Server>
-		)))
-	}
-}
+const ServerCardContainer = (cards) => (
+	
+		<div>
+		{cards.map((server) => <Server {...server}></Server>)}
+		
+		</div>
+		
+)
 //määrittää tarvittavat propertyt
 ServerCardContainer.propTypes = {
 	cards: PropTypes.arrayOf(
@@ -28,6 +27,8 @@ ServerCardContainer.propTypes = {
 		}).isRequired
 	).isRequired
 }
+
+
 /*let p;
 
 class ServerCardContainer extends Component {

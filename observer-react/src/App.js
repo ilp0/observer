@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import Nav from './Components/Nav.js';
+import Nav from './components/Nav.js';
 import { Container, Row, Col } from 'reactstrap';
 import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Alert } from 'reactstrap';
 import './App.css';
-import ObserverConnect from './Components/ObserverConnect.js';
-import Server from './Components/ServerCard.js';
-import ServerCardContainer from './Components/ServerCardContainer.js'
 import { connect } from 'react-redux';
+import VisibleServerCardContainer from './containers/VisibleServerCardContainer.js';
+import {WSConnection} from './containers/WSConnection.js'
 
 class App extends Component {
 
@@ -40,9 +39,9 @@ class App extends Component {
                 <Button>Open Server 1</Button>
               </CardBody>
               
-              
+              <WSConnection></WSConnection>
               <div>
-                <ServerCardContainer cards={this.slaves}></ServerCardContainer>
+                <VisibleServerCardContainer/>
               </div>
               
           </Card>
@@ -56,9 +55,9 @@ class App extends Component {
   }
   
   // divin sisällä servercardcontainerin kanssa <ObserverConnect cards={this.servercards}></ObserverConnect>
-  componentDidMount(){
-		slaves.push(new Server());
-		//new websocket connection
+  /*componentDidMount(){
+    //new websocket connection
+    
 		let ws = new WebSocket("ws://node.ilpo.codes:6152/");
 		//on websocket open
 		ws.onopen = function (){
@@ -70,17 +69,11 @@ class App extends Component {
 		} 
 		//on message received
 		ws.onmessage = function (event) {
-			/*
-			*
-			*
-			* TÄHÄN REDUX STOREEN MAPPAUS
-			* 
-			*
-			*/
 			let jn = JSON.parse(event.data);
       //jos parsetussa javascriptissä on 'pkey'
       if(jn['pkey']){
         //temp server
+        /*
         let isNew = true;
         let s = new Server();
         s.props.id = jn['pkey'];
@@ -103,59 +96,8 @@ class App extends Component {
           default:
           break;
         }
-        if (isNew) slaves.push(s);
-        else updateCard();
-        }
-        
-      }
-/*
-      //vanhat
-			if(jn['ip']) {
-				console.log(event.data);
-				let slv = null;
-				for(let x = 0; x < slaves.length; x++) {
-					if(slaves[x].ip == jn['ip']) {
-						slv = slaves[x];
-						break;
-					}
-					slaves[x].setState({ip: jn['ip']});
-					if(jn['cmd'] == "FREEM") {
-						slaves[x].setState({mem_tot: jn['data']['tot']});
-						slaves[x].setState({mem_us: jn['data']['used']});
-					}
-					if(jn['cmd'] == "CPU") {
-						slaves[x].setState({cpu_us: jn['data']['us']});
-					} 
-
-				}
-				if(slv == null) {
-					slv = new Server(jn['ip']);
-					if(jn['cmd'] == "FREEM") {
-						slv.setState({mem_tot: jn['data']['tot']});
-						slv.setState({mem_us: jn['data']['used']});
-					}
-					if(jn['cmd'] == "CPU") {
-						slv.setState({cpu_us: jn['data']['us']});
-					} 
-					let cc = new Server(slv);
-					slaves.push(cc);
-				}	
-				t.setState(t.state);		
-			}
-			//document.getElementById("data").innerHTML = event.data;
-		}
-*/
-  }
+        if (isNew) addServerCard(s);
+        */
 }
-
-function updateCard(state){
-  slaves.map((s) => {
-    if (s.id === state.id){
-      s.onUpdateCard();
-    }
-  });
-}
-
-const slaves = [];
 
 export default connect() (App);
