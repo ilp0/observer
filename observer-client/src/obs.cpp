@@ -14,6 +14,7 @@
 struct tx_conf {
     std::string ip = "127.0.0.1";
     int port = 6152;
+    std::string key_location = "/etc/observer/";
 } config;
 
 struct websocket *w;
@@ -30,7 +31,7 @@ void onmessage (char *data, uint16_t length) {
         if(jns["cmd"].ToString() == "AUTH") {
             if(jns["cb"].ToString() == "OK_NEW") {
                 std::ofstream f;
-                f.open(".obsc_conf");
+                f.open(config.key_location + ".obsc_conf");
                 f << jns["uuid"].ToString();
                 f.close();
             }
@@ -139,7 +140,7 @@ bool hostname_to_ip(const char * hostname , char* ip)
 }
 
 bool read_conf () {
-    std::ifstream infile("obs.conf");
+    std::ifstream infile("/etc/observer/obs.conf");
     std::string line;
     while (std::getline(infile, line))
     {
@@ -183,6 +184,11 @@ bool read_conf () {
                 config.port = std::atoi(value.c_str());
                 continue;
             }
+            else if(key == "KEY" || key == "key") {
+                printf("Config: Set Key parent directory to %s\n", value.c_str());
+                config.key_location = value;
+                continue;
+            }
             else {
                 printf("Config: Unknown key %s\n", key.c_str());
             }
@@ -205,9 +211,9 @@ int main () {
     jn["cmd"] = "AUTH";
     jn["auth"] = AUTH_KEY;
     jn["mac"] = TEST_MAC_ADDR;
-    if(file_exists(".obsc_conf")) {
+    if(file_exists(std::string(config.key_location + ".obsc_conf").c_str())) {
         std::string unikey = "";
-        std::ifstream is(".obsc_conf");
+        std::ifstream is(config.key_location + ".obsc_conf");
 
         char c;
         while (is.get(c)) {
@@ -215,7 +221,9 @@ int main () {
                 continue;
             unikey += c;
         }
-        jn["unid"] = unikey;
+        if(unikey.size() > 31) {
+            jn["unid"] = unikey;
+        }
 
     }
     std::string auth_msg = jn.dump(0, "");
