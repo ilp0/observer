@@ -3,7 +3,10 @@ install_loc="/bin"
 config_loc="/etc/observer"
 
 # TODO: Take install_loc & config_loc as parameters
-
+if [ "$EUID" -ne 0 ]
+  then echo "FAILED! Not root. Please run installer as root."
+  exit
+fi
 echo "Creating a config directory to $config_loc\n"
 mkdir $config_loc
 
