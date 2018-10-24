@@ -6,3 +6,6 @@ observer-client/obs.conf
 observer-server/node_modules
 observer-server/package-lock.json
 .vscode/
+observer-server/npm-debug.log
+observer-client/bin/observer-client
+observer-client/bin/observer-client

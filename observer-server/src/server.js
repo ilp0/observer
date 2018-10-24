@@ -186,9 +186,19 @@ function parse_message (cli, message) {
                 };
                 client_send(JSON.stringify(rt), "WEB");
             }
+            else if(jsn['type'] == "HP_TEMP"){
+                var rt = {
+                    "cmd": "HP_TEMP",
+                    "data": jsn['data'],
+                    "pkey": cli.unid,
+                    "ip": cli.ipaddr
+                };
+                client_send(JSON.stringify(rt), "WEB");
+            }
         }
     }
     else if(cli.type == "WB") {
+        // onks tää se service status?
         if(jsn['cmd'] == "REQ") {
             var rt = {
                 "cmd": "REQ",
@@ -196,11 +206,69 @@ function parse_message (cli, message) {
             };
             client_send(JSON.stringify(rt), "SINGLE", jsn['pkey']);
 
+        } else if (jsn['cmd'] == "REQH"){
+            //Request history from database
+            var jt = {
+                "cmd": "REQH",
+                "data": ""
+            };
         }
     }
 
 }
+/*
+datatype guide:
+0 = memory
+1 = cpu
 
+frequency of data:
+0 = divide timespan by 10 
+1 = divide timespan by 25
+2 = divide timespan by 50
+3 = divide timespan by 100
+4 = divide timespan by 250
+5 = divide timespan by 500 (lot of data!!!!)
+666 = get all data (NOT RECOMMENDED!)
+
+timeframe guide: 
+m = min
+h = hour
+d = day
+mo = month
+y = year
+
+
+
+time is BACKWARDS FROM THIS MOMENT
+
+for 5 day memory history: 
+getDataFromMySQL()
+
+
+function getDataFromMySQL(slaveid, type, freq, m, h, d, mo, y){
+
+let lastDate = new Date();
+date.setFullYear(date.getFullYear() - y, date.getMonth() - mo, date.getDate() - d);
+date.setHours(date.getHours() - h);
+date.setMinutes(date.getMinutes() - m);
+let interval = (new Date() - lastDate) / freq;
+let freqDates = [];
+for(let i = 0; i < freq; i++){
+    freqDates.push(new Date() - (i * interval));
+}
+
+let datatype = "";
+
+switch (type) {
+    case 0:
+    datatype = "memory";
+    break;
+    case 1:
+    datatype = "cpu_us";
+}
+
+}
+*/
 
 var con = mysql.createConnection({
     host: "localhost",

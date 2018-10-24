@@ -114,6 +114,20 @@ void transmit_service_status (std::string service) {
     WS_send(w, (char*)o.c_str(), o.size(), TEXT);
 }
 
+void transmit_temp_hp(){
+    json::JSON jm;
+    int ambient = std::atoi(exec_comm("hpasmcli -s \"show temp\" | grep \"AMBIENT\" | awk -F \" \" '{print +$3}'", NULL).c_str());
+    int mb = std::atoi(exec_comm("hpasmcli -s \"show temp\" | grep \"#29\" | awk -F \" \" '{print +$3}'", NULL).c_str());
+    int processor = std::atoi(exec_comm("hpasmcli -s \"show temp\" | grep \"#2\" | grep \"179F\" | awk -F \" \" '{print +$3}'", NULL).c_str());
+    jm["cmd"] = "DATA";
+    jm["type"] = "HP_TEMP";
+    jm["data"]["ambient"] = ambient;
+    jm["data"]["mb"] = mb;
+    jm["data"]["processor"] = processor;
+    std::string o = jm.dump(0, "");
+    WS_send(w, (char*)o.c_str(), o.size(), TEXT);
+}
+
 bool hostname_to_ip(const char * hostname , char* ip)
 {
     struct hostent *he;
