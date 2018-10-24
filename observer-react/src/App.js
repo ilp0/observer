@@ -5,10 +5,19 @@ import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } f
 import { Alert } from 'reactstrap';
 import './App.css';
 import { connect } from 'react-redux';
-import VisibleServerCardContainer from './containers/VisibleServerCardContainer.js';
-import {WSConnection} from './containers/WSConnection.js'
+import WSConnection from './containers/WSConnection.js'
+import Server from './components/Server'
+import ServerCards from './components/ServerCards'
+
+
+
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+    this.servercards = React.createRef();
+  }
 
   render() {
     return (
@@ -38,10 +47,8 @@ class App extends Component {
                 <CardText>CPU: 54% | Memory: 299GB/1024GB</CardText>
                 <Button>Open Server 1</Button>
               </CardBody>
-              
-              <WSConnection></WSConnection>
               <div>
-                <VisibleServerCardContainer/>
+                <ServerCards ref={this.servercards}></ServerCards>
               </div>
               
           </Card>
@@ -53,51 +60,25 @@ class App extends Component {
       </div>
     );
   }
+
+  componentDidMount(){
+    this._servercards = React.createRef();
+    let ws = new WebSocket("ws://node.ilpo.codes:6152/");
+    //on websocket open
+    ws.onopen = function (){
+      let jt = {
+        "cmd": "AUTH",
+        "auth": "68hv7Et8gj9fL35g9c8kO3lfoc7j5Klnm"
+      };
+      ws.send(JSON.stringify(jt));
+    } 
+    //on message received
+    ws.onmessage = function (event) {
+      console.log(event.data);
+      this._servercards.updateSlaves(event);
+
+  }}
   
-  // divin sisällä servercardcontainerin kanssa <ObserverConnect cards={this.servercards}></ObserverConnect>
-  /*componentDidMount(){
-    //new websocket connection
-    
-		let ws = new WebSocket("ws://node.ilpo.codes:6152/");
-		//on websocket open
-		ws.onopen = function (){
-			let jt = {
-				"cmd": "AUTH",
-				"auth": "68hv7Et8gj9fL35g9c8kO3lfoc7j5Klnm"
-			};
-			ws.send(JSON.stringify(jt));
-		} 
-		//on message received
-		ws.onmessage = function (event) {
-			let jn = JSON.parse(event.data);
-      //jos parsetussa javascriptissä on 'pkey'
-      if(jn['pkey']){
-        //temp server
-        /*
-        let isNew = true;
-        let s = new Server();
-        s.props.id = jn['pkey'];
-        for (let i = 0; i < slaves.props.length; i++){
-          if (slaves[i].id == jn['pkey']) {
-            s = slaves[i];
-            isNew = false;
-            break;
-          }
-        }
-        s.props.ip = jn['ip'];
-        switch(jn['cmd']){
-          case "FREEM":
-            s.props.mem_us = jn['data']['used'];
-            s.props.mem_tot = jn['data']['tot'];
-            break;
-          case "CPU":
-            s.props.cpu_us = jn['data']['us'];
-            break;
-          default:
-          break;
-        }
-        if (isNew) addServerCard(s);
-        */
 }
 
-export default connect() (App);
+export default (App);

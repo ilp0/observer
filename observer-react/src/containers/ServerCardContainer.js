@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
-import Server from '../components/ServerCard.js';
+import Server from '../components/Server.js';
 import PropTypes from 'prop-types';
-import {addServerCard} from '../actions'
-
 //map = for each // Käydään läpi jokainen 
 
 

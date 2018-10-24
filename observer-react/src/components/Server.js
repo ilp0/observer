@@ -3,21 +3,27 @@ import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } f
 import { Alert } from 'reactstrap';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 
 //Määrittää mitä returnataan.
-const Server = ({id, ip, cpu_us, mem_us, mem_tot}) => (
-	<Card>
-			<CardHeader>{ip}-{id}</CardHeader>
-			<CardBody>
-			<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
-			<CardText>{cpu_us}% | Memory: {mem_us}/{mem_tot}</CardText>
-			<Button>Open Server</Button>
-			</CardBody>
-	</Card>
+class Server extends React.Component {
 
-)
+	constructor(props){
+		super(props);
+		this.state = {ip: 0, id: 0, cpu_us: 0, mem_us: 0, mem_tot: 0};
+	}
+
+	render (){
+		return (<Card>
+		<CardHeader>{this.state.ip}-{this.state.id}</CardHeader>
+		<CardBody>
+		<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
+		<CardText>{this.state.cpu_us}% | Memory: {this.state.mem_us}/{this.state.mem_tot}</CardText>
+		<Button>Open Server</Button>
+		</CardBody>
+		</Card>	)
+	}
+}
 //määrittää tarvittavat propertyt
 Server.propTypes = {
 	id: PropTypes.string.isRequired,
