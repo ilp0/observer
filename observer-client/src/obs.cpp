@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include "json.hpp"
+#include <netdb.h>
 
 #define AUTH_KEY "9xAb3yhJA93hkbOprrw2gG30186km8jg9"
 #define TEST_MAC_ADDR "A0-73-B5-16-00-C0"
@@ -112,6 +113,31 @@ void transmit_service_status (std::string service) {
     WS_send(w, (char*)o.c_str(), o.size(), TEXT);
 }
 
+bool hostname_to_ip(const char * hostname , char* ip)
+{
+    struct hostent *he;
+    struct in_addr **addr_list;
+    int i;
+         
+    if ( (he = gethostbyname( hostname ) ) == NULL) 
+    {
+        // get the host info
+        herror("gethostbyname");
+        return 1;
+    }
+ 
+    addr_list = (struct in_addr **) he->h_addr_list;
+     
+    for(i = 0; addr_list[i] != NULL; i++) 
+    {
+        //Return the first one;
+        strcpy(ip , inet_ntoa(*addr_list[i]) );
+        return 0;
+    }
+     
+    return 1;
+}
+
 bool read_conf () {
     std::ifstream infile("obs.conf");
     std::string line;
@@ -146,8 +172,10 @@ bool read_conf () {
         _comment:
         if(key != "") {
             if(key == "SERVER" || key == "server") {
-                printf("Config: Set server IP to %s\n", value.c_str());
-                config.ip = value;
+                char ip[100] = { 0 };
+                hostname_to_ip(value.c_str(), ip);
+                config.ip = ip;
+                printf("Config: Set & resolved %s as %s\n", value.c_str(), config.ip.c_str());
                 continue;
             }
             else if(key == "PORT" || key == "port") {
@@ -165,6 +193,7 @@ bool read_conf () {
 
 int main () {
     read_conf();
+    
     w = WS((char*)config.ip.c_str(), config.port, NULL, NULL, NULL);
     if(w == NULL) {
         printf("WS Connection not established\n");
