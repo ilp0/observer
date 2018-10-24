@@ -92,13 +92,16 @@ function parse_message (cli, message) {
                 if(!jsn['unid']) {
                     // Old tx
                     var out_uuid = generate_uuid();
-                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+cli.ipaddr+"', '"+out_uuid+"')");
+                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+cli.ipaddr+"', '"+out_uuid+"')", function (err, result, fields) {
+
+                    });
                     var jt = {
                         "cmd": "AUTH",
                         "cb": "OK_NEW",
                         "uuid": out_uuid
                     };
                     console.log("NEW SLAVE!");
+                    cli.unid = out_uuid;
                     cli.conn.send(JSON.stringify(jt));
                 }
                 else {
@@ -151,7 +154,6 @@ function parse_message (cli, message) {
     }
     if(cli.type == "TX") {
         if(jsn['cmd'] == "DATA") {
-
             if(jsn['type'] == "MEM") {
                 // RECEIVE MEMORY
                 var rt = {

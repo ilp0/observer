@@ -30,10 +30,10 @@ void onmessage (char *data, uint16_t length) {
     if(jns.hasKey("cmd")) {
         if(jns["cmd"].ToString() == "AUTH") {
             if(jns["cb"].ToString() == "OK_NEW") {
-                std::ofstream f;
-                f.open(config.key_location + ".obsc_conf");
+                std::ofstream f(std::string(config.key_location + ".obsc_conf"), std::ofstream::out);
                 f << jns["uuid"].ToString();
                 f.close();
+                printf("Finished writing to file\n");
             }
         }
         else if(jns["cmd"].ToString() == "REQ") {
