@@ -6,45 +6,14 @@ import { Alert } from 'reactstrap';
 import './App.css';
 import ServerCards from './components/ServerCards';
 import Server from './components/Server';
-  import Websocket from 'react-websocket';
 
-let servers = [{id: 0, ip: 0}];
+let servers = [];
 
 class App extends Component {
 
   constructor(props){
     super(props);
     this.state = {ser: servers}
-    this.updateSlaves = this.updateSlaves.bind(this);
-    this.dank = this.dank.bind(this);
-  }
-
-  updateSlaves(jn){
-    
-    //jos parsetussa javascriptissä on 'pkey'
-    //if(jn['pkey']){
-    //temp serve
-    console.log(jn);
-    let s = new Server({id: jn['pkey'], ip: jn['ip']});
-    let isNew = true;
-    /*slaves.map((slave, i) =>{
-      if (slave.id === jn['pkey']) {
-      s = slaves[i];
-      isNew = false;
-      }
-    });
-    /*switch(jn['cmd']){
-      case "FREEM":
-      s.setState({mem_us: jn['data']['used']});
-      s.setState({mem_tot: jn['data']['tot']});
-      break;
-      case "CPU":
-      s.setState({cpu_us: jn['data']['us']});
-      break;
-      default:
-      break;
-    }*/
-    this.state.servers.push(s);
   }
 
   render() {
@@ -58,28 +27,9 @@ class App extends Component {
         <Col>
         <Row>
           <Col md="4">
-          <Card>
-            <CardHeader>Server 1</CardHeader>
-              <CardBody>
-                <CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
-                <CardText>CPU: 54% | Memory: 299GB/1024GB</CardText>
-                <Button>Open Server 1</Button>
-              </CardBody>
-          </Card>
-          </Col>
-          <Col md="4">
-          <Card>
-            <CardHeader>Server 1</CardHeader>
-              <CardBody>
-                <CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
-                <CardText>CPU: 54% | Memory: 299GB/1024GB</CardText>
-                <Button>Open Server 1</Button>
-              </CardBody>
-              <div>
-                <ServerCards servers={this.state.ser}></ServerCards>
+          <div>
+                <ServerCards servers={this.state.ser} onChange={this.handleChange}></ServerCards>
               </div>
-              
-          </Card>
           </Col>
         </Row>
         </Col>
@@ -87,11 +37,6 @@ class App extends Component {
       </Container>
       </div>
     );
-  }
-
-  dank(){
-    console.log("fasd");
-    return null;
   }
 
   componentDidMount(){
@@ -114,28 +59,35 @@ class App extends Component {
     ws.onmessage = function (event) {
       let jn = JSON.parse(event.data);
       if(jn['pkey']){
-        
+        let s = new Server(0);
         console.log(jn);
-        let s = new Server({id: jn['pkey'], ip: jn['ip']});
         let isNew = true;
-    /*slaves.map((slave, i) =>{
-      if (slave.id === jn['pkey']) {
-      s = slaves[i];
-      isNew = false;
-      }
-    });
-    /*switch(jn['cmd']){
-      case "FREEM":
-      s.setState({mem_us: jn['data']['used']});
-      s.setState({mem_tot: jn['data']['tot']});
-      break;
-      case "CPU":
-      s.setState({cpu_us: jn['data']['us']});
-      break;
-      default:
-      break;
-    }*/
-      servers.push(s);
+        let index = 0;
+        servers.map((s, i) =>{
+          if (s.id === jn['pkey']) {
+            index = i;
+            s = servers[i];
+            isNew = false;
+          }
+        });
+        if (isNew) {
+          s.id = jn['pkey'];
+          s.ip = jn['ip'];
+        }
+        switch (jn['cmd']) {
+          case "FREEM":
+            s.mem_us = jn['data']['used'];
+            s.mem_tot = jn['data']['tot'];
+            break;
+          case "CPU":
+            s.cpu_us = jn['data']['us'];
+            break;
+          default:
+          break;
+        } 
+
+        if(isNew) servers.push(s);
+        else s = servers[index];
       }
 
   }}

@@ -10,34 +10,37 @@ class ServerCards extends React.Component {
 	constructor(props){
 		super(props);
 		this.servers = this.props.servers;
+		this.state = {servers: this.props.servers};
 	}
 
 	render(){
-		if (isNaN(this.servers)){
+		
 		return (<div>
 			{
-				this.servers.map((slave, index) =>
-				<Server key={index} id={slave.id} ip={slave.ip} ></Server>)
+				this.state.servers.map((slave, index) =>
+				<Server key={index} id={slave.id} ip={slave.ip} cpu_us={slave.cpu_us} mem_us={slave.mem_us} mem_tot={slave.mem_tot}></Server>)
 			}
 		</div>);
-		} else return null;
+		
 	}
 
-	componentDidMount() {
+	componentDidMount(){
+    
 		this.timerID = setInterval(
-		  () => this.tick(),
-		  1000
-		);
-	  }
+			  () => this.tick(),
+			  1000
+			);
+		}
+		componentWillUnmount() {
+			clearInterval(this.timerID);
+		  }
+		
+		  tick() {
+			  console.log("rerender servercards");
+			this.setState(this.state);
 	
-	  componentWillUnmount() {
-		clearInterval(this.timerID);
-	  }
-	
-	  tick() {
-		this.setState(this.state);
-	  }
+		  }
+		  
 	  
-
 }
 export default ServerCards;

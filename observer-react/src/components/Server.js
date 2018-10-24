@@ -11,19 +11,22 @@ class Server extends React.Component {
 	constructor(props){
 		super(props);
 		this.id = props.id;
-		this.ip = props.ip
+		this.ip = props.ip;
+		this.cpu_us = props.cpu_us;
+		this.mem_us = props.mem_us;
+		this.mem_tot = props.mem_tot;
 	}
 
 	render (){
 		return (<div><Card>
-		<CardHeader>{this.props.ip}-{this.props.id}</CardHeader></Card>	</div>)/*
+		<CardHeader>{this.props.ip}-{this.props.id}</CardHeader>
 		<CardBody>
 		<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
-		<CardText>{this.state.cpu_us}% | Memory: {this.state.mem_us}/{this.state.mem_tot}</CardText>
+		<CardText>{this.props.cpu_us}% | Memory: {this.props.mem_us}/{this.props.mem_tot}</CardText>
 		<Button>Open Server</Button>
 		</CardBody>
-		</Card>	)
-		*/
+		</Card></div>)
+		
 	}
 }
 
