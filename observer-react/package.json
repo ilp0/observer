@@ -8,7 +8,7 @@
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.4",
     "react-websocket": "^2.0.0",
-    "reactstrap": "^6.5.0",
+    "reactstrap": "^6.5.0"
   },
   "scripts": {
     "start": "react-scripts start",

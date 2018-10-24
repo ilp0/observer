@@ -6,9 +6,6 @@ import { Alert } from 'reactstrap';
 import './App.css';
 import ServerCards from './components/ServerCards'
 
-
-
-
 class App extends Component {
 
   constructor(props){
