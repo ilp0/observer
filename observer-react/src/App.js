@@ -4,13 +4,47 @@ import { Container, Row, Col } from 'reactstrap';
 import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Alert } from 'reactstrap';
 import './App.css';
-import ServerCards from './components/ServerCards'
+import ServerCards from './components/ServerCards';
+import Server from './components/Server';
+  import Websocket from 'react-websocket';
+
+let servers = [{id: 0, ip: 0}];
 
 class App extends Component {
 
   constructor(props){
     super(props);
-    this.servercards = React.createRef();
+    this.state = {ser: servers}
+    this.updateSlaves = this.updateSlaves.bind(this);
+    this.dank = this.dank.bind(this);
+  }
+
+  updateSlaves(jn){
+    
+    //jos parsetussa javascriptissä on 'pkey'
+    //if(jn['pkey']){
+    //temp serve
+    console.log(jn);
+    let s = new Server({id: jn['pkey'], ip: jn['ip']});
+    let isNew = true;
+    /*slaves.map((slave, i) =>{
+      if (slave.id === jn['pkey']) {
+      s = slaves[i];
+      isNew = false;
+      }
+    });
+    /*switch(jn['cmd']){
+      case "FREEM":
+      s.setState({mem_us: jn['data']['used']});
+      s.setState({mem_tot: jn['data']['tot']});
+      break;
+      case "CPU":
+      s.setState({cpu_us: jn['data']['us']});
+      break;
+      default:
+      break;
+    }*/
+    this.state.servers.push(s);
   }
 
   render() {
@@ -42,7 +76,7 @@ class App extends Component {
                 <Button>Open Server 1</Button>
               </CardBody>
               <div>
-                <ServerCards ref={this.servercards}></ServerCards>
+                <ServerCards servers={this.state.ser}></ServerCards>
               </div>
               
           </Card>
@@ -55,8 +89,18 @@ class App extends Component {
     );
   }
 
+  dank(){
+    console.log("fasd");
+    return null;
+  }
+
   componentDidMount(){
-    this._servercards = React.createRef();
+    
+    this.timerID = setInterval(
+		  () => this.tick(),
+		  1000
+		);
+	  
     let ws = new WebSocket("ws://node.ilpo.codes:6152/");
     //on websocket open
     ws.onopen = function (){
@@ -68,11 +112,48 @@ class App extends Component {
     } 
     //on message received
     ws.onmessage = function (event) {
-      console.log(event.data);
-      this._servercards.updateSlaves(event);
+      let jn = JSON.parse(event.data);
+      if(jn['pkey']){
+        
+        console.log(jn);
+        let s = new Server({id: jn['pkey'], ip: jn['ip']});
+        let isNew = true;
+    /*slaves.map((slave, i) =>{
+      if (slave.id === jn['pkey']) {
+      s = slaves[i];
+      isNew = false;
+      }
+    });
+    /*switch(jn['cmd']){
+      case "FREEM":
+      s.setState({mem_us: jn['data']['used']});
+      s.setState({mem_tot: jn['data']['tot']});
+      break;
+      case "CPU":
+      s.setState({cpu_us: jn['data']['us']});
+      break;
+      default:
+      break;
+    }*/
+      servers.push(s);
+      }
 
   }}
+
+
+	
+	  componentWillUnmount() {
+		clearInterval(this.timerID);
+	  }
+	
+	  tick() {
+    this.setState({ser: servers});
+
+	  }
+	  
   
 }
+
+
 
 export default (App);

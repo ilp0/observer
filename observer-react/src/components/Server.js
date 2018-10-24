@@ -10,27 +10,22 @@ class Server extends React.Component {
 
 	constructor(props){
 		super(props);
-		this.state = {ip: 0, id: 0, cpu_us: 0, mem_us: 0, mem_tot: 0};
+		this.id = props.id;
+		this.ip = props.ip
 	}
 
 	render (){
-		return (<Card>
-		<CardHeader>{this.state.ip}-{this.state.id}</CardHeader>
+		return (<div><Card>
+		<CardHeader>{this.props.ip}-{this.props.id}</CardHeader></Card>	</div>)/*
 		<CardBody>
 		<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
 		<CardText>{this.state.cpu_us}% | Memory: {this.state.mem_us}/{this.state.mem_tot}</CardText>
 		<Button>Open Server</Button>
 		</CardBody>
 		</Card>	)
+		*/
 	}
 }
-//määrittää tarvittavat propertyt
-Server.propTypes = {
-	id: PropTypes.string.isRequired,
-	ip: PropTypes.string.isRequired,
-	cpu_us: PropTypes.string.isRequired,
-	mem_us: PropTypes.string.isRequired,
-	mem_tot: PropTypes.string.isRequired
-}
+
 
 export default Server;
