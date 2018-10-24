@@ -19,7 +19,7 @@ class Server extends React.Component {
 
 	render (){
 		return (<div><Card>
-		<CardHeader>{this.props.ip}-{this.props.id}</CardHeader>
+		<CardHeader>{this.props.ip}</CardHeader>
 		<CardBody>
 		<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
 		<CardText>{this.props.cpu_us}% | Memory: {this.props.mem_us}/{this.props.mem_tot}</CardText>
