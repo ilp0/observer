@@ -66,7 +66,7 @@ class ServerCards extends React.Component {
 				s.mem_tot = jn['data']['tot'];
 				break;
 			  case "CPU":
-				s.cpu_us = jn['data']['us'];
+				s.cpu_us = jn['data']['us'].toFixed(2);
 				break;
 			  default:
 			  break;
