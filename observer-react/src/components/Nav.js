@@ -1,5 +1,6 @@
 import React from 'react';
 import { Nav, NavItem, NavLink, Button } from 'reactstrap';
+import logo from '../observer.svg';
 
 
 export default class Example extends React.Component {
@@ -18,11 +19,11 @@ export default class Example extends React.Component {
   render() {
     return (
       <div>
-        <h1><a onClick={() =>this.Click(0)}>Observer</a></h1>
+        <img className="mainLogo" src={logo} onClick={() =>this.Click(0)}></img>
         <Nav pills fixed="true" vertical color="primary">
         {
         this.state.ser.map((slave, index) =>
-        <NavItem key={index}>
+        <NavItem className="navServerBtn" key={index}>
         <Button onClick={() =>this.Click(slave.id)}>{slave.ip}</Button>
         </NavItem>)
         }
