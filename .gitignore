@@ -4,3 +4,4 @@ observer-client/bin/*
 observer-client/obs.conf
 # ignore node_modules
 observer-server/node_modules
+observer-server/package-lock.json
