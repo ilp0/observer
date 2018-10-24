@@ -4,9 +4,6 @@ import { Container, Row, Col } from 'reactstrap';
 import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Alert } from 'reactstrap';
 import './App.css';
-import { connect } from 'react-redux';
-import WSConnection from './containers/WSConnection.js'
-import Server from './components/Server'
 import ServerCards from './components/ServerCards'
 
 
