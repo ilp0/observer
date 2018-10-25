@@ -15,6 +15,7 @@ struct tx_conf {
     std::string ip = "127.0.0.1";
     int port = 6152;
     std::string key_location = "/etc/observer/";
+    bool isHP = false;
 } config;
 
 struct websocket *w;
@@ -22,6 +23,7 @@ std::string exec_comm (std::string cmd, int *returncode);
 void transmit_service_status (std::string service);
 void transmit_cpu ();
 void transmit_memory ();
+void transmit_temp_hp ();
 
 void onmessage (char *data, uint16_t length) {
     printf("%s\n", data);
@@ -184,6 +186,12 @@ bool read_conf () {
             value += line[ix];
             ix++;
         }
+        while(ix < line.size() && (line[ix] != ' ' && line[ix] != '\t' && line[ix] != ':')) {
+            if(line[ix] == '#')
+                goto _comment;
+            value += line[ix];
+            ix++;
+        }
         _comment:
         if(key != "") {
             if(key == "SERVER" || key == "server") {
@@ -201,6 +209,10 @@ bool read_conf () {
             else if(key == "KEY" || key == "key") {
                 printf("Config: Set Key parent directory to %s\n", value.c_str());
                 config.key_location = value;
+                continue;
+            } else if(key == "HPCLIENABLED" || key == "hpclienabled") {
+                printf("HP TOOLS ENABLED");
+                if(value == "true" ) config.isHP = true;
                 continue;
             }
             else {
@@ -246,6 +258,7 @@ int main () {
         sleep(1);
         transmit_memory();
         transmit_cpu();
+        if(config.isHP) transmit_temp_hp();
     }
     return 0;
 }
