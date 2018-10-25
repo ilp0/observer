@@ -40,8 +40,9 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `observerdb`.`log` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `type` TINYINT(1) NULL DEFAULT NULL,
-  `data` VARCHAR(8192) NULL DEFAULT NULL,
+  `type` VARCHAR(32) NULL DEFAULT NULL,
+  `value` FLOAT NULL DEFAULT NULL,
+  `info` VARCHAR(1024) NULL DEFAULT NULL,
   `slave_id` INT(11) NULL DEFAULT NULL,
   `timestamp` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
