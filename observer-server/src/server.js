@@ -14,7 +14,20 @@ function client () {
     this.conn = null;
     this.ipaddr = null;
     this.unid = null;
+    // i never think
+    this.id_in_database = null;
     this.index = clients.push(this) - 1;
+    // buffer
+    this.buffer = {
+        mem_us: [],
+        cpu_us: [],
+        t_cpu: [],
+        t_amb: [],
+        t_mb: [],
+        pwr: []
+    };
+    // buffer timer
+    this.buffer_timer = Math.floor(Date.now() / 1000) + 60/*save data every minute*/;
     return this;
 }
 
@@ -95,6 +108,12 @@ function parse_message (cli, message) {
                     con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+cli.ipaddr+"', '"+out_uuid+"')", function (err, result, fields) {
 
                     });
+
+                    con.query("SELECT id FROM slave WHERE uni_id='"+out_uuid+"'", function (err, result, fields) {
+                        if(!err && result.length != 0) {
+                            cli.id_in_database = result[0].id;
+                        }
+                    });
                     var jt = {
                         "cmd": "AUTH",
                         "cb": "OK_NEW",
@@ -114,6 +133,7 @@ function parse_message (cli, message) {
                         }
                         else {
                             var uuid = result[0].uni_id;
+                            cli.id_in_database = result[0].id;
                             con.query("UPDATE slave SET ip_addr = '"+cli.ipaddr+"' WHERE uni_id = '" + uuid + "'");
                             console.log("OLD SLAVE!");
                             var jt = {
@@ -162,6 +182,7 @@ function parse_message (cli, message) {
                     "pkey": cli.unid,
                     "ip": cli.ipaddr
                 };
+                cli.buffer.mem_us.push(jsn['data']['used']);
                 client_send(JSON.stringify(rt), "WEB")
             }
             else if(jsn['type'] == "CPU") {
@@ -172,6 +193,7 @@ function parse_message (cli, message) {
                     "pkey": cli.unid,
                     "ip": cli.ipaddr
                 };
+                cli.buffer.cpu_us.push(jsn['data']['us']);
                 client_send(JSON.stringify(rt), "WEB");
             }
             else if(jsn['type'] == "SERVICE") {
@@ -184,6 +206,7 @@ function parse_message (cli, message) {
                     "pkey": cli.unid,
                     "ip": cli.ipaddr
                 };
+                
                 client_send(JSON.stringify(rt), "WEB");
             }
             else if(jsn['type'] == "HP_TEMP"){
@@ -193,6 +216,9 @@ function parse_message (cli, message) {
                     "pkey": cli.unid,
                     "ip": cli.ipaddr
                 };
+                cli.buffer.t_amb.push(jsn['data']['ambient']);
+                cli.buffer.t_cpu.push(jsn['data']['cpu']);
+                cli.buffer.t_mb.push(jsn['data']['mb']);
                 client_send(JSON.stringify(rt), "WEB");
             }
             else if(jsn['type'] == "HP_PWRM"){
@@ -202,29 +228,82 @@ function parse_message (cli, message) {
                     "pkey": cli.unid,
                     "ip": cli.ipaddr
                 };
+                cli.buffer.pwr.push(jsn['data']['pwrm']);
                 client_send(JSON.stringify(rt), "WEB");
+            }
+            // Timer check
+            if(Math.floor(Date.now() / 1000) >= cli.buffer_timer) {
+                db_save(cli);
             }
         }
     }
     else if(cli.type == "WB") {
-        // onks tää se service status?
-        if(jsn['cmd'] == "REQ") {
+        // service status
+        if(jsn['cmd'] == "REQS") {
             var rt = {
                 "cmd": "REQ",
-                "req": jsn['req']
+                "req": "SERVICE",
+                "service": jsn['service']
             };
             client_send(JSON.stringify(rt), "SINGLE", jsn['pkey']);
 
         } else if (jsn['cmd'] == "REQH"){
             //Request history from database
-            var jt = {
-                "cmd": "REQH",
-                "data": ""
-            };
+            getHistory(jsn['pkey'], jsn['from'], jsn['type'], function (data) {
+                var jt = {
+                    "cmd": "REQH",
+                    "data": data
+                };
+                client_send(JSON.stringify(jt), "SINGLE", cli.unid);
+            });
+            
         }
     }
 
 }
+
+function db_save (cli) {
+    console.log("DB save");
+    var avg = {
+
+    };
+
+    var get_avg = function (arr) {
+        if(arr == null || arr == undefined)
+            return null;
+        if(arr.length == 0)
+            return null;
+        
+        var b = 0;
+        for(var x = 0; x < arr.length; x++) {
+            b += arr[x];
+        }
+        return b/arr.length;
+    }
+    for (var key in cli.buffer) {
+        if (cli.buffer.hasOwnProperty(key)) {
+            avg[key] = get_avg(cli.buffer[key]);
+            if(avg[key] == null)
+                continue;
+                
+            con.query("INSERT INTO log (type, value, slave_id, timestamp) VALUES ('" + key + "', '" + avg[key] + "', '" + cli.id_in_database + "', CURRENT_TIMESTAMP)", function (err, result, fields) {
+                
+            });
+        }
+    }
+    cli.buffer_timer = Math.floor(Date.now() / 1000) + 60;
+    cli.buffer = {
+        mem_us: [],
+        cpu_us: [],
+        t_cpu: [],
+        t_amb: [],
+        t_mb: [],
+        pwr: []
+    };
+
+    
+}
+
 /*
 datatype guide:
 0 = memory
@@ -253,31 +332,21 @@ time is BACKWARDS FROM THIS MOMENT
 for 5 day memory history: 
 getDataFromMySQL()
 
-
-function getDataFromMySQL(slaveid, type, freq, m, h, d, mo, y){
-
-let lastDate = new Date();
-date.setFullYear(date.getFullYear() - y, date.getMonth() - mo, date.getDate() - d);
-date.setHours(date.getHours() - h);
-date.setMinutes(date.getMinutes() - m);
-let interval = (new Date() - lastDate) / freq;
-let freqDates = [];
-for(let i = 0; i < freq; i++){
-    freqDates.push(new Date() - (i * interval));
-}
-
-let datatype = "";
-
-switch (type) {
-    case 0:
-    datatype = "memory";
-    break;
-    case 1:
-    datatype = "cpu_us";
-}
-
-}
 */
+
+// slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
+function getHistory(slave, from, datatype, callback){
+    con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = '" + slave + "' WHERE type = '"+datatype+"' AND slave_id = s.id AND DATE(l.timestamp) BETWEEN '"+from+"' AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
+        if(!err) {
+            callback(result);
+        }
+        else {
+            callback(null);
+        }
+    });
+
+}
+
 
 var con = mysql.createConnection({
     host: "localhost",
@@ -315,6 +384,8 @@ function handle_on_m (cli) {
     });
     cli.conn.on('close', function(connection) {
         console.log("client dc");
+        // save db on exit
+        db_save(cli);
         clients.splice(cli.index, 1);
     });
 }
