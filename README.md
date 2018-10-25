@@ -1,8 +1,16 @@
 # observer
 Server Dashboard
-
 Project for TTMS0500 /  TTMS0900
 
+## Installation
+
+* todo *
+
+## Usage
+
+* todo *
+
+## Ajankäyttö ja projektin työstäminen
 ### 27.9.2018
 - Suunnittelua
 ### 7.10.2018
