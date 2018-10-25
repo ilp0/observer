@@ -71,7 +71,8 @@ class App extends Component {
 		}
 		//ON MESSAGE RECEIVED, PARSE MESSAGE, SHOULD HAPPEN!!
 		ws.onmessage = function (event) {
-		  let jn = JSON.parse(event.data);
+      let jn = JSON.parse(event.data);
+      console.log(jn);
 		  if(jn['pkey']){
 			let s = {};
 			let isNew = true;
