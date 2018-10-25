@@ -1,5 +1,6 @@
 import React from 'react';
 import Server from './Server'
+import {Col, Row} from 'reactstrap'
 
 class ServerCards extends React.Component {
 
@@ -19,12 +20,16 @@ class ServerCards extends React.Component {
 	}
 	// FUNCTION FOR RENDERING DATA FROM ALL CARDS -----AKA OVERVIEW----- (DEFAULT)
 	getAllServerCards(){
-		return (<div>
+		return (<div><Row>
 			{
 				this.state.ser.map((slave, index) =>
-				<Server key={slave.id} id={slave.id} ip={slave.ip} cpu_us={slave.cpu_us} mem_us={slave.mem_us} mem_tot={slave.mem_tot} selectServer={this.handleClick}></Server>)
+				
+				<Col key={slave.id} lg="4">
+				<Server {...slave} selectServer={this.handleClick} extendedView="0"></Server>
+				</Col>
+				)
 			}
-		</div>);
+		</Row></div>)
 	}
 
 	// FUNCTION FOR RENDERING DATA FROM SINGLE CARD
@@ -37,7 +42,7 @@ class ServerCards extends React.Component {
 				}
 				console.log("not" + s.id);
 			});
-			return (<div><Server key={ss.id} id={ss.id} ip={ss.ip} cpu_us={ss.cpu_us} mem_us={ss.mem_us} mem_tot={ss.mem_tot} selectServer={this.handleClick}></Server></div>);
+			return (<div><Server {...ss} selectServer={this.handleClick} extendedView="1"></Server></div>);
 
 	}
 

@@ -1,7 +1,9 @@
 import React from 'react';
-import { Card, Button, CardHeader, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Col, Row, Card, Button, CardHeader, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Alert } from 'reactstrap';
+import ChartCard from './ChartCard'
 
+const PI = Math.PI;
 //Määrittää mitä returnataan.
 class Server extends React.Component {
 	//SET ALL PROPS
@@ -13,6 +15,8 @@ class Server extends React.Component {
 		this.mem_us = props.mem_us;
 		this.mem_tot = props.mem_tot;
 		this.openServer = this.openServer.bind(this);
+		this.extendedView = props.extendedView;
+		this.his = props.his;
 	
 	}
 	//EXECUTES METHOD IN SERVERCARDS
@@ -21,16 +25,36 @@ class Server extends React.Component {
 	}
 
 	render (){
-		return (
-		<div><Card>
-		<CardHeader>{this.props.ip}</CardHeader>
-		<CardBody>
-		<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
-		<CardText>{this.props.cpu_us}% | Memory: {this.props.mem_us}/{this.props.mem_tot}</CardText>
-		<Button onClick={() => this.openServer()}>Open Server</Button>
-		</CardBody>
-		</Card></div>)
-		
+
+		if(this.extendedView === "0"){
+			return (
+				<div>
+				<Card className="serverCard">
+				<CardHeader>{this.props.ip}</CardHeader>
+				<CardBody>
+				<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
+				
+					<Row>
+						<Col lg="6">
+						CPU: {this.props.cpu_us}%
+						</Col>
+						<Col lg="6"> 
+						Memory: {this.props.mem_us}/{this.props.mem_tot}
+						</Col>
+					</Row>
+				
+				<Button onClick={() => this.openServer()}>Open Server</Button>
+				</CardBody>
+				</Card></div>)
+		} else {
+			let mem_max = this.his.mem_tot[0].data;
+			return (
+				<div>
+				<ChartCard data={this.his.mem_us} max={mem_max} title="MB"></ChartCard>
+				<ChartCard data={this.his.cpu_us} max="100" title="%"></ChartCard>
+				</div>
+			)
+		}
 	}
 }
 

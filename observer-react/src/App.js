@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Nav from './components/Nav.js';
-import { Container, Row, Col } from 'reactstrap';
+import { CardColumns, Container, Row, Col } from 'reactstrap';
 import './App.css';
 import ServerCards from './components/ServerCards';
 
@@ -34,14 +34,8 @@ class App extends Component {
         <Col md="3">
           <Nav servers={servers} allClick={this.handleMenuClick}/>
         </Col>
-        <Col>
-        <Row>
-          <Col md="4">
-          
-          <ServerCards view={view} servers={servers} handleServerClick={this.handleServerClick}></ServerCards>
-          
-          </Col>
-        </Row>
+        <Col md="9">
+        	<ServerCards view={view} servers={servers} handleServerClick={this.handleServerClick}></ServerCards>
         </Col>
       </Row>
       </Container>
@@ -72,7 +66,7 @@ class App extends Component {
 		//ON MESSAGE RECEIVED, PARSE MESSAGE, SHOULD HAPPEN!!
 		ws.onmessage = function (event) {
       let jn = JSON.parse(event.data);
-      console.log(jn);
+      //console.log(jn);
 		  if(jn['pkey']){
 			let s = {};
 			let isNew = true;
@@ -86,21 +80,30 @@ class App extends Component {
 			});
 			
 			  s.id = jn['pkey'];
-			  s.ip = jn['ip'];
+				s.ip = jn['ip'];
+				if (isNew){
+					s.his = {mem_us: [], mem_tot: [], cpu_us: []}
+				}
 			//IF THE MESSAGE CONTAINS CMD (COMMAND), THEN SET APPROPRIATE DATA TO SERVER
 			switch (jn['cmd']) {
-			  case "FREEM":
-				s.mem_us = ((jn['data']['used'])/1000).toFixed(2) + "G";
-				s.mem_tot = ((jn['data']['tot'])/1000).toFixed(2) + "G";
+				case "FREEM":
+				let mus = ((jn['data']['used'])/10).toFixed(2);
+				let mtot =  ((jn['data']['tot'])/10).toFixed(2);
+				s.mem_us = mus;
+				s.mem_tot = mtot;
+				s.his.mem_us.push({data: mus, time: Date.now()});
+				s.his.mem_tot.push({data: mtot, time: Date.now()});
 				break;
 			  case "CPU":
 				s.cpu_us = jn['data']['us'].toFixed(2);
+				s.his.cpu_us.push({data: jn['data']['us'], time: Date.now()});
 				break;
 			  default:
 			  break;
 			} 
 			//console.log(s);
 			//IF NEW, CREATE NEW SERVER, ELSE REWRITE OLD SERVER WITH NEW DATA.
+			console.log(s.his);
 			if(isNew) servers.push(s);
       else s = servers[index];
 		  }
