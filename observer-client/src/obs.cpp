@@ -130,6 +130,17 @@ void transmit_temp_hp(){
     WS_send(w, (char*)o.c_str(), o.size(), TEXT);
 }
 
+void transmit_powermeter_hp(){
+    json::JSON jm;
+    int pwr = std::atoi(exec_comm("hpasmcli -s 'show powermeter' | grep 'Reading' | awk -F \" \" '{print +$4}'", NULL).c_str());
+    jm["cmd"] = "DATA";
+    jm["type"] = "HP_PWRM";
+    jm["data"]["pwrm"] = pwr;
+  
+    std::string o = jm.dump(0, "");
+    WS_send(w, (char*)o.c_str(), o.size(), TEXT);
+}
+
 bool hostname_to_ip(const char * hostname , char* ip)
 {
     struct hostent *he;
@@ -258,7 +269,10 @@ int main () {
         sleep(1);
         transmit_memory();
         transmit_cpu();
-        if(config.isHP) transmit_temp_hp();
+        if(config.isHP) {
+            transmit_temp_hp();
+            transmit_powermeter_hp();
+        }
     }
     return 0;
 }

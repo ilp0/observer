@@ -195,6 +195,15 @@ function parse_message (cli, message) {
                 };
                 client_send(JSON.stringify(rt), "WEB");
             }
+            else if(jsn['type'] == "HP_PWRM"){
+                var rt = {
+                    "cmd": "HP_PWRM",
+                    "data": jsn['data'],
+                    "pkey": cli.unid,
+                    "ip": cli.ipaddr
+                };
+                client_send(JSON.stringify(rt), "WEB");
+            }
         }
     }
     else if(cli.type == "WB") {

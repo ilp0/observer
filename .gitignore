@@ -9,3 +9,4 @@ observer-server/package-lock.json
 observer-server/npm-debug.log
 observer-client/bin/observer-client
 observer-client/bin/observer-client
+observer-client/bin/observer-client
