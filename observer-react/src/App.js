@@ -14,16 +14,10 @@ class App extends Component {
   constructor(props){
     super(props);
     this.handleServerClick = this.handleServerClick.bind(this);
-    this.handleMenuClick = this.handleMenuClick.bind(this);
   }
 
   handleServerClick(id){
     view[0] = id;
-  }
-
-  handleMenuClick(id){
-    view[0] = id;
-    console.log(view);
   }
 
   render() {
@@ -32,7 +26,7 @@ class App extends Component {
       <Container>
       <Row>
         <Col md="3">
-          <Nav servers={servers} allClick={this.handleMenuClick}/>
+          <Nav servers={servers} allClick={this.handleServerClick}/>
         </Col>
         <Col md="9">
         	<ServerCards view={view} servers={servers} handleServerClick={this.handleServerClick}></ServerCards>
@@ -87,8 +81,8 @@ class App extends Component {
 			//IF THE MESSAGE CONTAINS CMD (COMMAND), THEN SET APPROPRIATE DATA TO SERVER
 			switch (jn['cmd']) {
 				case "FREEM":
-				let mus = ((jn['data']['used'])/10).toFixed(2);
-				let mtot =  ((jn['data']['tot'])/10).toFixed(2);
+				let mus = jn['data']['used'];
+				let mtot =  jn['data']['tot'];
 				s.mem_us = mus;
 				s.mem_tot = mtot;
 				s.his.mem_us.push({data: mus, time: Date.now()});

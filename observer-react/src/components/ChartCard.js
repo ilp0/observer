@@ -23,15 +23,13 @@ class ChartCard extends React.Component {
 	render(){
 		let formattedData = [];
 		this.data.map((d,i) =>{
-			formattedData.push({x: d.time, y: d.data})
+			formattedData.push({x: i, y: d.data})
 		})
-		  console.log(this.max)
-		  console.log(formattedData[formattedData.length -1].y)
 		return(<div>
-			<XYPlot width={300} height={300}>
+			<XYPlot width={400} height={300}>
 			<HorizontalGridLines />
 			<VerticalGridLines />
-			<XAxis title="tics" position="start" />
+			<XAxis position="start" />
 			<YAxis title={this.title}/>
 			<LineSeries
 			  data={formattedData}

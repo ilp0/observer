@@ -39,8 +39,10 @@ class ServerCards extends React.Component {
 				if (this.state.view[0] === s.id && ss === false){
 					console.log("success " + s.id);
 					ss = s;
+				} else {
+					console.log("not" + s.id);
 				}
-				console.log("not" + s.id);
+				
 			});
 			return (<div><Server {...ss} selectServer={this.handleClick} extendedView="1"></Server></div>);
 
@@ -50,7 +52,7 @@ class ServerCards extends React.Component {
 	handleClick(id){
 		console.log("clicked server card button" + id);
 		//PASSES ACTION TO APP.JS
-		this.view[0] = id;
+		//this.view[0] = id;
 		this.props.handleServerClick(id);
 	}
 

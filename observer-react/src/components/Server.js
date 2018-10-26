@@ -50,8 +50,20 @@ class Server extends React.Component {
 			let mem_max = this.his.mem_tot[0].data;
 			return (
 				<div>
-				<ChartCard data={this.his.mem_us} max={mem_max} title="MB"></ChartCard>
-				<ChartCard data={this.his.cpu_us} max="100" title="%"></ChartCard>
+				<h2>{this.ip}</h2>
+				<p>{this.id}</p>
+				<Row>
+				<Col lg="6">
+					<h3>Memory</h3>
+					<ChartCard data={this.his.mem_us} max={mem_max} title="MB"></ChartCard>
+					
+				</Col>
+				<Col lg="6">
+					<h3>CPU</h3>
+					<ChartCard data={this.his.cpu_us} max="100" title="%"></ChartCard>
+					
+				</Col>
+				</Row>
 				</div>
 			)
 		}
