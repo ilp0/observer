@@ -1,0 +1,13 @@
+{
+  "name": "observer-server",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "mysql-client": "^0.3.0",
+    "websocket": "^1.0.28"
+  },
+  "scripts": {
+    "start": "node src/server.js"
+  }
+}

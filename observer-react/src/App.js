@@ -45,13 +45,19 @@ class App extends Component {
 
   componentDidMount(){
 		//OPEN WEB SOCKET AT START
-		let ws = new WebSocket("ws://node.ilpo.codes:6152/");
+		let ws = new WebSocket("ws://localhost:6152/");
 		ws.onopen = function (){
 		  let jt = {
 			"cmd": "AUTH",
 			"auth": "68hv7Et8gj9fL35g9c8kO3lfoc7j5Klnm"
 		  };
-		  ws.send(JSON.stringify(jt));
+			ws.send(JSON.stringify(jt));
+			
+			let gse = {
+				"cmd": "MISC",
+				"sub": "SERVERS"
+			};
+			ws.send(JSON.stringify(gse));
 		} 
     //ON ERROR, PRINT IN CONSOLE. SHOULD NOT HAPPEN!
 		ws.onerror = function (){
@@ -59,7 +65,18 @@ class App extends Component {
 		}
 		//ON MESSAGE RECEIVED, PARSE MESSAGE, SHOULD HAPPEN!!
 		ws.onmessage = function (event) {
-      let jn = JSON.parse(event.data);
+			let jn = JSON.parse(event.data);
+			if(jn['cmd'] == "MISC") {
+				if(jn['sub'] == "SERVERS") {
+					for(let i = 0; i < jn['servers'].length; i++) {
+						let ser = jn['servers'][i];
+						console.log(ser);
+						servers.push({id: ser.uni_id, ip: ser.ip, friendlyname: ser.friendlyname, his: {mem_us: [], mem_tot: [], cpu_us: []}, status: "OFFLINE"});
+					}
+					return;
+				}
+			}
+
       //console.log(jn);
 		  if(jn['pkey']){
 			let s = {};
@@ -75,6 +92,7 @@ class App extends Component {
 			
 			  s.id = jn['pkey'];
 				s.ip = jn['ip'];
+				s.status = "ONLINE";
 				if (isNew){
 					s.his = {mem_us: [], mem_tot: [], cpu_us: []}
 				}

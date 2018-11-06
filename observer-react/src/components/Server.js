@@ -11,8 +11,21 @@ class Server extends React.Component {
 		super(props);
 		this.id = props.id;
 		this.ip = props.ip;
+		this.status = props.status;
 		this.cpu_us = props.cpu_us;
 		this.mem_us = props.mem_us;
+		this.colors = {
+			green: {
+				background: "#d4edda",
+				color: "#155724",
+				borderColor: "#d4edda"
+			},
+			red: {
+				background: "#edd4da",
+				color: "#571524",
+				borderColor: "#e6c3cb"
+			}
+		};
 		this.mem_tot = props.mem_tot;
 		this.openServer = this.openServer.bind(this);
 		this.extendedView = props.extendedView;
@@ -32,7 +45,8 @@ class Server extends React.Component {
 				<Card className="serverCard">
 				<CardHeader>{this.props.ip}</CardHeader>
 				<CardBody>
-				<CardTitle>Server Health <Alert color="success">GOOD</Alert></CardTitle>
+				<CardTitle>Status<Alert style={this.props.status == "ONLINE" ? this.colors.green : this.colors.red}>{this.props.status}</Alert></CardTitle>
+				<CardTitle>Server Health<Alert color="success">GOOD</Alert></CardTitle>
 				
 					<Row>
 						<Col lg="6">
