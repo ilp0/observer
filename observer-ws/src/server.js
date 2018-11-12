@@ -406,6 +406,12 @@ function handle_on_m (cli) {
         // save db on exit
         db_save(cli);
         clients.splice(cli.index, 1);
+        var rt = {
+            "cmd": "EVENT",
+            "type": "slave_dc",
+            "pkey": cli.unid
+        };
+        client_send(JSON.stringify(rt), "WEB");
     });
 }
 
