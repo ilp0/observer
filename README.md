@@ -2,13 +2,14 @@
 Server Dashboard
 Project for TTMS0500 /  TTMS0900
 
-## Installation
-
-* todo *
-
 ## Usage
 
-* todo *
+- Pull repo `git clone https://ilp0/observer.git`
+- `cd observer`
+- Import the sql database to your mysql/mariadb server.
+- Edit the config file in ------- and insert your mysql server ip, port, desired password.
+- Start backend by running `npm install & npm start` in the observer-ws directory
+- Copy the contents of the observer-react/build/ directory to your web-server
 
 ## Todo
 
