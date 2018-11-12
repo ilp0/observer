@@ -2,11 +2,15 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var mysql = require('mysql');
 
+// Slave authentication string
 var auth_slave = "9xAb3yhJA93hkbOprrw2gG30186km8jg9";
+// Web client authentication string
 var auth_userclient = "68hv7Et8gj9fL35g9c8kO3lfoc7j5Klnm";
 
+// Client array
 var clients = [];
 
+// Client object
 function client () {
     this.type = null;
     this.auth = -1;
@@ -14,10 +18,9 @@ function client () {
     this.conn = null;
     this.ipaddr = null;
     this.unid = null;
-    // i never think
     this.id_in_database = null;
-    this.index = clients.push(this) - 1;
-    // buffer
+    this.index = clients.push(this) - 1; // Push client to "clients" array
+    // Data buffer
     this.buffer = {
         mem_us: [],
         cpu_us: [],
@@ -26,11 +29,12 @@ function client () {
         t_mb: [],
         pwr: []
     };
-    // buffer timer
-    this.buffer_timer = Math.floor(Date.now() / 1000) + 60/*save data every minute*/;
+    // Buffer save timer
+    this.buffer_timer = Math.floor(Date.now() / 1000) + 60;
     return this;
 }
 
+// Find client index helper
 function client_find_index (connid) {
     for(var x = 0; x < clients.length; x++) {
         if(clients[x].conn.id == connid)
@@ -38,6 +42,8 @@ function client_find_index (connid) {
     }
     return -1;
 }
+
+// Generates a temporary unique id for web client
 function getUniqueID () {
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -45,6 +51,7 @@ function getUniqueID () {
     return s4() + s4() + '-' + s4();
 };
 
+// Generates the slave unique key, stored in /etc/observer/.obsc_conf
 function generate_uuid () {
     var gr = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     var str = "";
@@ -54,7 +61,9 @@ function generate_uuid () {
     return str;
 }
 
+// Send data to clients
 function client_send (message, mode = "ALL", client_id) {
+    // Broadcast all authenticated
     if(mode == "ALL") {
         for(var x = 0; x < clients.length; x++) {
             if(clients[x].type == null)
@@ -64,6 +73,7 @@ function client_send (message, mode = "ALL", client_id) {
 
         }
     }
+    // Send to every web client
     else if(mode == "WEB") {
         for(var x = 0; x < clients.length; x++) {
             if(clients[x].type == null)
@@ -75,6 +85,19 @@ function client_send (message, mode = "ALL", client_id) {
 
         }
     }
+    // Send to every slave
+    else if(mode == "SLAVES") {
+        for(var x = 0; x < clients.length; x++) {
+            if(clients[x].type == null)
+                continue;
+            
+            if(clients[x].type == "TX") {
+                clients[x].conn.send(message);
+            }
+
+        }
+    }
+    // Send to a single client
     else if(mode == "SINGLE") {
         for(var x = 0; x < clients.length; x++) {
             if(clients[x].unid == client_id) {
@@ -85,19 +108,24 @@ function client_send (message, mode = "ALL", client_id) {
     }
 }
 
+// Message parser
 function parse_message (cli, message) {
     var jsn = JSON.parse(message);
     if(jsn == null)
         return false;
 
+    // Check if client should identify
     if(cli.auth < 0) {
-
+        // Receiving client authorization
         if(jsn['cmd'] == 'AUTH') {
+            // Slave authorization string
             if(jsn['auth'] == auth_slave) {
-                // Connection is a transmitter
+                // Setting client type, state and authorization status
                 cli.type = "TX";
                 cli.state = "AUTHORIZED";
                 cli.auth = 1;
+
+                // Getting IP address
                 var splt_addr = cli.conn.remoteAddress.split(":");
                 cli.ipaddr = splt_addr[splt_addr.length - 1];
                 // Mac address is obsolete
@@ -105,36 +133,37 @@ function parse_message (cli, message) {
                 if(!jsn['unid']) {
                     // Old tx
                     var out_uuid = generate_uuid();
-                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+cli.ipaddr+"', '"+out_uuid+"')", function (err, result, fields) {
+                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+con.escape(cli.ipaddr)+"', '"+con.escape(out_uuid)+"')", function (err, result, fields) {
 
                     });
 
-                    con.query("SELECT id FROM slave WHERE uni_id='"+out_uuid+"'", function (err, result, fields) {
+                    con.query("SELECT id FROM slave WHERE uni_id='"+con.escape(out_uuid)+"'", function (err, result, fields) {
                         if(!err && result.length != 0) {
                             cli.id_in_database = result[0].id;
                         }
                     });
-                    var jt = {
+                    // Response
+                    var resp = {
                         "cmd": "AUTH",
                         "cb": "OK_NEW",
                         "uuid": out_uuid
                     };
                     console.log("NEW SLAVE!");
                     cli.unid = out_uuid;
-                    cli.conn.send(JSON.stringify(jt));
+                    cli.conn.send(JSON.stringify(resp));
                 }
                 else {
                     cli.unid = jsn['unid'];
-                    con.query("SELECT * FROM slave WHERE uni_id='" + cli.unid + "'", function (err, result, fields) {
+                    con.query("SELECT * FROM slave WHERE uni_id='" + con.end(cli.unid) + "'", function (err, result, fields) {
                         if(err || result.length == 0) {
                             // NOT FOUND -- DROP CLIENT
-                            console.log("FAKE SLAVE! >:(");
+                            console.log("Slave unique id not found from database, dropping...");
                             cli.conn.close();
                         }
                         else {
                             var uuid = result[0].uni_id;
                             cli.id_in_database = result[0].id;
-                            con.query("UPDATE slave SET ip_addr = '"+cli.ipaddr+"' WHERE uni_id = '" + uuid + "'");
+                            con.query("UPDATE slave SET ip_addr = '"+con.escape(cli.ipaddr)+"' WHERE uni_id = '" + con.escape(uuid) + "'");
                             console.log("OLD SLAVE!");
                             var jt = {
                                 "cmd": "AUTH",
@@ -280,7 +309,7 @@ function parse_message (cli, message) {
     }
 
 }
-
+// Store data to database
 function db_save (cli) {
     console.log("DB save");
     var avg = {
@@ -305,7 +334,7 @@ function db_save (cli) {
             if(avg[key] == null)
                 continue;
                 
-            con.query("INSERT INTO log (type, value, slave_id, timestamp) VALUES ('" + key + "', '" + avg[key] + "', '" + cli.id_in_database + "', CURRENT_TIMESTAMP)", function (err, result, fields) {
+            con.query("INSERT INTO log (type, value, slave_id, timestamp) VALUES ('" + con.escape(key) + "', '" + con.escape(avg[key]) + "', '" + con.escape(cli.id_in_database) + "', CURRENT_TIMESTAMP)", function (err, result, fields) {
                 
             });
         }
@@ -355,7 +384,7 @@ getDataFromMySQL()
 
 // slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
 function getHistory(slave, from, datatype, callback){
-    con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = '" + slave + "' WHERE type = '"+datatype+"' AND slave_id = s.id AND DATE(l.timestamp) BETWEEN '"+from+"' AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
+    con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = '" + con.escape(slave) + "' WHERE type = '"+con.escape(datatype)+"' AND slave_id = s.id AND DATE(l.timestamp) BETWEEN '"+con.escape(from)+"' AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
         if(!err) {
             callback(result);
         }
@@ -366,7 +395,7 @@ function getHistory(slave, from, datatype, callback){
 
 }
 
-
+// Connect to mysql
 var con = mysql.createConnection({
     host: "localhost",
     user: "observeruser",
@@ -380,12 +409,14 @@ con.connect(function(err) {
     if (err) throw err;
     console.log("MySQL:     [OK]");
 });
-
+// Create HTTP server
 var server = http.createServer(function(request, response) {
 
 });
+// Listen to 6152 port, this must match the client's port
 server.listen(6152, function() { console.log("TCP:      [OK]"); });
 
+// Create websocket server
 wsServer = new WebSocketServer({
     httpServer: server
 });
@@ -396,6 +427,7 @@ function handle_on_m (cli) {
         if(message.type === 'binary') {
 
         }
+        // Receiving Text data
         else if (message.type === 'utf8') {
             parse_message(cli, message.utf8Data);
         }
@@ -415,6 +447,7 @@ function handle_on_m (cli) {
     });
 }
 
+// Handling connection request
 function handle_req (req) {
     let cli = new client();
     cli.conn = req.accept(null, req.origin)
