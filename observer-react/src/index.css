@@ -32,6 +32,7 @@ h1 {
 
 .mainLogo {
   margin-bottom: 1em;
+  cursor: pointer;
 }
 
 .serverCard {

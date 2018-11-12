@@ -66,6 +66,7 @@ class App extends Component {
 		//ON MESSAGE RECEIVED, PARSE MESSAGE, SHOULD HAPPEN!!
 		ws.onmessage = function (event) {
 			let jn = JSON.parse(event.data);
+			
 			if(jn['cmd'] == "MISC") {
 				if(jn['sub'] == "SERVERS") {
 					for(let i = 0; i < jn['servers'].length; i++) {
@@ -76,8 +77,7 @@ class App extends Component {
 					return;
 				}
 			}
-
-      //console.log(jn);
+			// Data
 		  if(jn['pkey']){
 			let s = {};
 			let isNew = true;
@@ -89,6 +89,12 @@ class App extends Component {
 				isNew = false;
 			  }
 			});
+			if(jn['cmd'] == "EVENT") {
+				if(jn['type'] == "slave_dc") {
+					s.status = "OFFLINE";
+				}
+				return;
+			}
 			
 			  s.id = jn['pkey'];
 				s.ip = jn['ip'];
