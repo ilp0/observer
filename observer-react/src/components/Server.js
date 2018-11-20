@@ -11,6 +11,7 @@ class Server extends React.Component {
 		super(props);
 		this.id = props.id;
 		this.ip = props.ip;
+		this.friendlyname = props.friendlyname;
 		this.status = props.status;
 		this.cpu_us = props.cpu_us;
 		this.mem_us = props.mem_us;
@@ -43,7 +44,7 @@ class Server extends React.Component {
 			return (
 				<div>
 				<Card className="serverCard">
-				<CardHeader>{this.props.ip}</CardHeader>
+				<CardHeader>{this.friendlyname}<br>{this.ip}</CardHeader>
 				<CardBody>
 				<CardTitle>Status<Alert style={this.props.status == "ONLINE" ? this.colors.green : this.colors.red}>{this.props.status}</Alert></CardTitle>
 				<CardTitle>Server Health<Alert color="success">GOOD</Alert></CardTitle>
@@ -65,6 +66,7 @@ class Server extends React.Component {
 			return (
 				<div>
 				<h2>{this.ip}</h2>
+				<h2>{this.friendlyname}</h2><Button>Edit</Button>
 				<p>{this.id}</p>
 				<Row>
 				<Col lg="6">
