@@ -396,13 +396,14 @@ function getHistory(slave, from, datatype, callback){
     });
 
 }
-
+fs = require('fs');
+var sqlCreds = JSON.parse(fs.readFileSync('.sql-credentials', 'utf8'));
 // Connect to mysql
 var con = mysql.createConnection({
-    host: "192.168.1.17",
-    user: "observeruser",
-    password: "OskuKattoo112", // Change this to match your mysql password
-    database: "observerdb"
+    host: sqlCreds.db.host,
+    user: sqlCreds.db.user,
+    password: sqlCreds.db.password, // Change this to match your mysql password
+    database: sqlCreds.db.database
 });
 
 console.log("Starting Observer-server...");
