@@ -133,11 +133,13 @@ function parse_message (cli, message) {
                 if(!jsn['unid']) {
                     // Old tx
                     var out_uuid = generate_uuid();
-                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ('"+con.escape(cli.ipaddr)+"', '"+con.escape(out_uuid)+"')", function (err, result, fields) {
-
+                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ("+con.escape(cli.ipaddr)+", "+con.escape(out_uuid)+")", function (err, result, fields) {
+                        if(err) {
+                            console.log(err);
+                        }
                     });
 
-                    con.query("SELECT id FROM slave WHERE uni_id='"+con.escape(out_uuid)+"'", function (err, result, fields) {
+                    con.query("SELECT id FROM slave WHERE uni_id="+con.escape(out_uuid)+"", function (err, result, fields) {
                         if(!err && result.length != 0) {
                             cli.id_in_database = result[0].id;
                         }
@@ -154,7 +156,7 @@ function parse_message (cli, message) {
                 }
                 else {
                     cli.unid = jsn['unid'];
-                    con.query("SELECT * FROM slave WHERE uni_id='" + con.end(cli.unid) + "'", function (err, result, fields) {
+                    con.query("SELECT * FROM slave WHERE uni_id=" + con.escape(cli.unid) + "", function (err, result, fields) {
                         if(err || result.length == 0) {
                             // NOT FOUND -- DROP CLIENT
                             console.log("Slave unique id not found from database, dropping...");
@@ -163,7 +165,7 @@ function parse_message (cli, message) {
                         else {
                             var uuid = result[0].uni_id;
                             cli.id_in_database = result[0].id;
-                            con.query("UPDATE slave SET ip_addr = '"+con.escape(cli.ipaddr)+"' WHERE uni_id = '" + con.escape(uuid) + "'");
+                            con.query("UPDATE slave SET ip_addr = "+con.escape(cli.ipaddr)+" WHERE uni_id = " + con.escape(uuid) + "");
                             console.log("OLD SLAVE!");
                             var jt = {
                                 "cmd": "AUTH",
@@ -334,7 +336,7 @@ function db_save (cli) {
             if(avg[key] == null)
                 continue;
                 
-            con.query("INSERT INTO log (type, value, slave_id, timestamp) VALUES ('" + con.escape(key) + "', '" + con.escape(avg[key]) + "', '" + con.escape(cli.id_in_database) + "', CURRENT_TIMESTAMP)", function (err, result, fields) {
+            con.query("INSERT INTO log (type, value, slave_id, timestamp) VALUES (" + con.escape(key) + ", " + con.escape(avg[key]) + ", " + con.escape(cli.id_in_database) + ", CURRENT_TIMESTAMP)", function (err, result, fields) {
                 
             });
         }
@@ -384,7 +386,7 @@ getDataFromMySQL()
 
 // slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
 function getHistory(slave, from, datatype, callback){
-    con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = '" + con.escape(slave) + "' WHERE type = '"+con.escape(datatype)+"' AND slave_id = s.id AND DATE(l.timestamp) BETWEEN '"+con.escape(from)+"' AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
+    con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND DATE(l.timestamp) BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
         if(!err) {
             callback(result);
         }
