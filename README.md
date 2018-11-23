@@ -17,7 +17,6 @@ Project for TTMS0500 /  TTMS0900
 - Serverien nimeäminen
 - Servicen status näkyviin
   * Näiden loggaus aina muutoksen tapahtuessa(start, stop)
-- MySQL credut ja serverin ip conffi tiedostosta
 
 ## Ajankäyttö ja projektin työstäminen
 ### 27.9.2018
