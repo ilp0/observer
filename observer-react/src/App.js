@@ -51,7 +51,7 @@ class App extends Component {
 
   componentDidMount(){
 		//OPEN WEB SOCKET AT START
-		let ws = new WebSocket("ws://192.168.1.13:6152/");
+		let ws = new WebSocket("ws://localhost:6152/");
 		ws.onopen = function (){
 		  let jt = {
 			"cmd": "AUTH",
