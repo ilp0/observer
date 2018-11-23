@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Nav from './components/Nav.js';
 import { CardColumns, Container, Row, Col } from 'reactstrap';
-import { Popup } from './components/Popup.js';
 import './App.css';
 import ServerCards from './components/ServerCards';
 
@@ -10,16 +9,13 @@ let servers = [];
 //VIEW VARIABLE: ONLY FIRST(0) OBJECT IS EVER USED. WEIRD STUFF WITH PASSING DOWN SINGLE VARIABLES. PASSING DOWN ARRAYS SEEMS TO WORK ???
 let view = [];
 
+//Main app
 class App extends Component {
 
   constructor(props){
     super(props);
 		this.handleServerClick = this.handleServerClick.bind(this);
-		this.state = {
-      showPopup: false
-    };
 	}
-	
 
   handleServerClick(id){
     view[0] = id;
@@ -51,7 +47,7 @@ class App extends Component {
 
   componentDidMount(){
 		//OPEN WEB SOCKET AT START
-		let ws = new WebSocket("ws://localhost:6152/");
+		let ws = new WebSocket("ws://192.168.1.13:6152/");
 		ws.onopen = function (){
 		  let jt = {
 			"cmd": "AUTH",
