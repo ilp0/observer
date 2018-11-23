@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 
 class Popup extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.text = props.text;
+    this.closePopup = props.closePopup;
+  }
     render() {
       return (
         <div className='popup'>
@@ -12,5 +18,5 @@ class Popup extends React.Component {
       );
     }
   }
-  
+
 export default Popup;
