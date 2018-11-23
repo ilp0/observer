@@ -354,36 +354,6 @@ function db_save (cli) {
     
 }
 
-/*
-datatype guide:
-0 = memory
-1 = cpu
-
-frequency of data:
-0 = divide timespan by 10 
-1 = divide timespan by 25
-2 = divide timespan by 50
-3 = divide timespan by 100
-4 = divide timespan by 250
-5 = divide timespan by 500 (lot of data!!!!)
-666 = get all data (NOT RECOMMENDED!)
-
-timeframe guide: 
-m = min
-h = hour
-d = day
-mo = month
-y = year
-
-
-
-time is BACKWARDS FROM THIS MOMENT
-
-for 5 day memory history: 
-getDataFromMySQL()
-
-*/
-
 // slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
 function getHistory(slave, from, datatype, callback){
     con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND DATE(l.timestamp) BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
