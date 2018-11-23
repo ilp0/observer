@@ -8,6 +8,7 @@ import {
 	LineSeries,
 	DecorativeAxis
   } from 'react-vis';
+import { format } from 'util';
 
 
 
@@ -18,13 +19,28 @@ class ChartCard extends React.Component {
 		this.data = props.data;
 		this.max = props.max;
 		this.title = props.title;
+		this.datatype = props.datatype || null;
 	}
 	
 	render(){
 		let formattedData = [];
-		this.data.map((d,i) =>{
-			formattedData.push({x: i, y: d.data})
-		})
+		if(this.data) {
+			this.data.map((d,i) =>{
+				// history data
+				if(this.datatype != null) {
+					let g = new Date(d.timestamp);
+					
+					formattedData.push({x: i, y: d.value})
+				}
+				else {
+					formattedData.push({x: i, y: d.data})
+
+				}
+			});
+		}
+		else {
+			formattedData = [{x: 0, y: 0}];
+		}
 		return(<div>
 			<XYPlot width={400} height={300}>
 			<HorizontalGridLines />

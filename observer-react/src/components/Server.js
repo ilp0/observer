@@ -2,6 +2,7 @@ import React from 'react';
 import { Col, Row, Card, Button, CardHeader, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Alert } from 'reactstrap';
 import ChartCard from './ChartCard'
+import { getHistoricalData } from '../App'
 
 const PI = Math.PI;
 //Määrittää mitä returnataan.
@@ -31,11 +32,16 @@ class Server extends React.Component {
 		this.openServer = this.openServer.bind(this);
 		this.extendedView = props.extendedView;
 		this.his = props.his;
+
+		this.history_cpu = props.history_cpu;
 	
 	}
 	//EXECUTES METHOD IN SERVERCARDS
 	openServer(){
 		this.props.selectServer(this.id);
+		let d = new Date();
+		d.setHours(d.getHours() - 1);
+		getHistoricalData("cpu_us", d, this.id);
 	}
 
 	render (){
@@ -75,6 +81,11 @@ class Server extends React.Component {
 				<Col lg="6">
 					<h3>CPU</h3>
 					<ChartCard data={this.his.cpu_us} max="100" title="%"></ChartCard>
+					
+				</Col>
+				<Col lg="6">
+					<h3>CPU History</h3>
+					<ChartCard datatype='cpu_us' data={this.history_cpu} max="100" title=""></ChartCard>
 					
 				</Col>
 				</Row>

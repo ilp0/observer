@@ -286,7 +286,8 @@ function parse_message (cli, message) {
             getHistory(jsn['pkey'], jsn['from'], jsn['type'], function (data) {
                 var jt = {
                     "cmd": "REQH",
-                    "data": data
+                    "data": data,
+                    "pkey": jsn['pkey']
                 };
                 client_send(JSON.stringify(jt), "SINGLE", cli.unid);
             });
@@ -358,7 +359,7 @@ function db_save (cli) {
 
 // slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
 function getHistory(slave, from, datatype, callback){
-    con.query("SELECT l.* FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND DATE(l.timestamp) BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
+    con.query("SELECT l.*FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND DATE(l.timestamp) BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
         if(!err) {
             callback(result);
         }
