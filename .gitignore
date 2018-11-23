@@ -1,0 +1,3 @@
+.sql-credentials
+*.log
+.vscode
