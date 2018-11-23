@@ -1,8 +1,9 @@
 import React from 'react';
-import { Col, Row, Card, Button, CardHeader, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Col, Row, Card, Button, CardHeader, CardBody, CardTitle, CardText, Input, Form } from 'reactstrap';
 import { Alert } from 'reactstrap';
 import ChartCard from './ChartCard'
 import { getHistoricalData } from '../App'
+import Popup from "reactjs-popup";
 
 const PI = Math.PI;
 //Määrittää mitä returnataan.
@@ -70,8 +71,18 @@ class Server extends React.Component {
 			return (
 				<div>
 				<h2>{this.ip}</h2>
-				<h2>{this.friendlyname}</h2><Button>Edit</Button>
-				<p>{this.id}</p>
+				<h2>{this.friendlyname}</h2>
+				<Popup trigger={<Button>Edit</Button>} modal>
+					<div id="popup-inside">
+						<p>Edit Server Name</p>
+						<Form>
+							<Input type="text" name="friendlyname" placeholder={this.friendlyname} />
+							<br></br>
+							<Button>Submit</Button>
+						</Form>
+						 
+					</div>
+				</Popup>
 				<Row>
 				<Col lg="6">
 					<h3>Memory</h3>

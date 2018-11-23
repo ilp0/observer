@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Nav from './components/Nav.js';
 import { CardColumns, Container, Row, Col } from 'reactstrap';
-import { Popup } from './components/Popup.js';
 import './App.css';
 import ServerCards from './components/ServerCards';
 

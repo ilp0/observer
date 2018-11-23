@@ -1,3 +1,4 @@
 observer-ws/.sql-credentials
 *.log
 .vscode
+observer-ws/npm-debug.log

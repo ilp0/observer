@@ -17,7 +17,6 @@ Project for TTMS0500 /  TTMS0900
 - Serverien nimeäminen
 - Servicen status näkyviin
   * Näiden loggaus aina muutoksen tapahtuessa(start, stop)
-- MySQL credut ja serverin ip conffi tiedostosta
 
 ## Ajankäyttö ja projektin työstäminen
 ### 27.9.2018
@@ -40,3 +39,15 @@ Project for TTMS0500 /  TTMS0900
 - Hurja koodaus putki, kumpaankin, backendiin sekä frontendiin. + tunteja dokumentaation lukua
 ### 25.10.2018
 - Koodausputki jatkuu, pääpaino backendissä.
+### 26.10.2018
+- Single-server näkymän muutoksia, charttien lisäys
+### 6.11.2018
+- MySql muutoksia ja sourcekoodien siirtelyä
+### 12.11.2018
+- Buildin setuppaaminen. Front-end muutoksia
+### 13.11.2018 
+- Kommentointia ja mysql muutoksia
+### 20.11.2018
+- Friendlyname display
+### 23.11.2018
+- Paljon muutoksia, lisäyksiä ja korjauksia koko projektiin.
