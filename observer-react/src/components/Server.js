@@ -46,9 +46,7 @@ class Server extends React.Component {
 				<Card className="serverCard">
 				<CardHeader>{this.friendlyname}-{this.ip}</CardHeader>
 				<CardBody>
-				<CardTitle>Status<Alert style={this.props.status == "ONLINE" ? this.colors.green : this.colors.red}>{this.props.status}</Alert></CardTitle>
-				<CardTitle>Server Health<Alert color="success">GOOD</Alert></CardTitle>
-				
+				<CardTitle>Status<Alert style={this.props.status == "ONLINE" ? this.colors.green : this.colors.red}>{this.props.status}</Alert></CardTitle>				
 					<Row>
 						<Col lg="6">
 						CPU: {this.props.cpu_us}%

@@ -397,9 +397,9 @@ function getHistory(slave, from, datatype, callback){
 
 // Connect to mysql
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "192.168.1.17",
     user: "observeruser",
-    password: "obspass123", // Change this to match your mysql password
+    password: "OskuKattoo112", // Change this to match your mysql password
     database: "observerdb"
 });
 
