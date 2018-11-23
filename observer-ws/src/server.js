@@ -128,12 +128,13 @@ function parse_message (cli, message) {
                 // Getting IP address
                 var splt_addr = cli.conn.remoteAddress.split(":");
                 cli.ipaddr = splt_addr[splt_addr.length - 1];
+                cli.friendlyname = jsn['hostname'];
                 // Mac address is obsolete
                 // cli.mac = jsn['mac'];
                 if(!jsn['unid']) {
                     // Old tx
                     var out_uuid = generate_uuid();
-                    con.query("INSERT INTO slave (ip_addr, uni_id) VALUES ("+con.escape(cli.ipaddr)+", "+con.escape(out_uuid)+")", function (err, result, fields) {
+                    con.query("INSERT INTO slave (ip_addr, uni_id, friendlyname) VALUES ("+con.escape(cli.ipaddr)+", "+con.escape(out_uuid)+", " + con.escape(cli.friendlyname) + ")", function (err, result, fields) {
                         if(err) {
                             console.log(err);
                         }
@@ -165,6 +166,7 @@ function parse_message (cli, message) {
                         else {
                             var uuid = result[0].uni_id;
                             cli.id_in_database = result[0].id;
+                            cli.friendlyname = result[0].friendlyname;
                             con.query("UPDATE slave SET ip_addr = "+con.escape(cli.ipaddr)+" WHERE uni_id = " + con.escape(uuid) + "");
                             console.log("OLD SLAVE!");
                             var jt = {
