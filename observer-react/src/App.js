@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Nav from './components/Nav.js';
 import { CardColumns, Container, Row, Col } from 'reactstrap';
+import { Popup } from './components/Popup.js';
 import './App.css';
 import ServerCards from './components/ServerCards';
 
@@ -13,14 +14,16 @@ class App extends Component {
 
   constructor(props){
     super(props);
-    this.handleServerClick = this.handleServerClick.bind(this);
+		this.handleServerClick = this.handleServerClick.bind(this);
+		
   }
 
   handleServerClick(id){
     view[0] = id;
   }
-
+	//MAIN RENDER FUNCTION
   render() {
+		
     return (
       <div className="App">
       <Container>
