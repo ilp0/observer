@@ -1,3 +1,3 @@
-*.sql-credentials
+/observer-ws/.sql-credentials
 *.log
 .vscode
