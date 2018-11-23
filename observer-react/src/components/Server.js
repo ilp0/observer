@@ -44,7 +44,7 @@ class Server extends React.Component {
 			return (
 				<div>
 				<Card className="serverCard">
-				<CardHeader>{this.friendlyname}-{this.ip}</CardHeader>
+				<CardHeader>{this.friendlyname} - {this.ip}</CardHeader>
 				<CardBody>
 				<CardTitle>Status<Alert style={this.props.status == "ONLINE" ? this.colors.green : this.colors.red}>{this.props.status}</Alert></CardTitle>				
 					<Row>
@@ -56,7 +56,7 @@ class Server extends React.Component {
 						</Col>
 					</Row>
 				
-				<Button onClick={() => this.openServer()}>Open Server</Button>
+				<Button disabled={this.props.status === "OFFLINE" ? true : false} onClick={() => this.openServer()}>Open Server</Button>
 				</CardBody>
 				</Card></div>)
 		} else {

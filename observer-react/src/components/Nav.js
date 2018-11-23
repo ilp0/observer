@@ -24,7 +24,7 @@ export default class Example extends React.Component {
         {
         this.state.ser.map((slave, index) =>
         <NavItem className="navServerBtn" key={index}>
-        <Button className="navServerBtnInner" onClick={() =>this.Click(slave.id)}>{slave.ip}</Button>
+        <Button disabled={slave.status === "OFFLINE" ? true : false} className="navServerBtnInner" onClick={() =>this.Click(slave.id)}>{slave.friendlyname} - {slave.ip}</Button>
         </NavItem>)
         }
         </Nav>

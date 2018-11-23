@@ -15,8 +15,11 @@ class App extends Component {
   constructor(props){
     super(props);
 		this.handleServerClick = this.handleServerClick.bind(this);
-		
-  }
+		this.state = {
+      showPopup: false
+    };
+	}
+	
 
   handleServerClick(id){
     view[0] = id;
