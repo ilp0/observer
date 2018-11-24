@@ -19,7 +19,7 @@ const _formatdate = function (date) {
 
 		return a;
 	};
-	return date.getFullYear() + "-" + addz(date.getMonth() + 1) + "-" + addz(date.getDay()) + " " + addz(date.getHours()) + ":" + addz(date.getMinutes()) + ":" + addz(date.getSeconds());
+	return date.getFullYear() + "-" + addz(date.getMonth() + 1) + "-" + addz(date.getDate()) + " " + addz(date.getHours()) + ":" + addz(date.getMinutes()) + ":" + addz(date.getSeconds());
 };
 export const getHistoricalData = function (type, from, pkey) {
 	ws.send(JSON.stringify({ cmd: "REQH", from: _formatdate(from), type: type, pkey: pkey}));
@@ -125,9 +125,15 @@ class App extends Component {
 				}
 				// Receive history
 				if (jn['cmd'] == "REQH") {
-					console.log("Receiving history data: ");
-					console.log(jn['data']);
-					s.history_cpu = jn['data'];
+					switch(jn['type']) {
+						case "cpu_us":
+							s.history_cpu = jn['data'];
+							break;
+						case "mem_us":
+							s.history_mem = jn['data'];
+							break;
+					}
+					
 					return;
 				}
 

@@ -24,6 +24,7 @@ class ChartCard extends React.Component {
 	
 	render(){
 		let formattedData = [];
+		
 		if(this.data) {
 			this.data.map((d,i) =>{
 				// history data
@@ -38,7 +39,7 @@ class ChartCard extends React.Component {
 				}
 			});
 		}
-		else {
+		if(formattedData.length < 1) {
 			formattedData = [{x: 0, y: 0}];
 		}
 		return(<div>

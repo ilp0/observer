@@ -34,7 +34,9 @@ class Server extends React.Component {
 		this.extendedView = props.extendedView;
 		this.his = props.his;
 
-		this.history_cpu = props.history_cpu;
+
+		this.history_cpu = this.props.history_cpu;
+		this.history_mem = this.props.history_mem;
 	
 	}
 	//EXECUTES METHOD IN SERVERCARDS
@@ -43,6 +45,7 @@ class Server extends React.Component {
 		let d = new Date();
 		d.setHours(d.getHours() - 1);
 		getHistoricalData("cpu_us", d, this.id);
+		getHistoricalData("mem_us", d, this.id);
 	}
 
 	render (){
@@ -95,10 +98,16 @@ class Server extends React.Component {
 					
 				</Col>
 				<Col lg="6">
+					<h3>Memory History</h3>
+					<ChartCard datatype='mem_us' data={this.history_mem} max={mem_max} title=""></ChartCard>
+					
+				</Col>
+				<Col lg="6">
 					<h3>CPU History</h3>
 					<ChartCard datatype='cpu_us' data={this.history_cpu} max="100" title=""></ChartCard>
 					
 				</Col>
+				
 				</Row>
 				</div>
 			)
