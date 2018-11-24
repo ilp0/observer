@@ -21,8 +21,15 @@ const _formatdate = function (date) {
 	};
 	return date.getFullYear() + "-" + addz(date.getMonth() + 1) + "-" + addz(date.getDay()) + " " + addz(date.getHours()) + ":" + addz(date.getMinutes()) + ":" + addz(date.getSeconds());
 };
+
+//GET HISTORICAL DATA FROM MYSQL
 export const getHistoricalData = function (type, from, pkey) {
 	ws.send(JSON.stringify({ cmd: "REQH", from: _formatdate(from), type: type, pkey: pkey}));
+};
+
+//SEND FRIENDLYNAME
+export const sendFriendlyname = function (name, pkey) {
+	ws.send(JSON.stringify({ cmd: "SETN", pkey: pkey}));
 };
 
 class App extends Component {
@@ -31,11 +38,11 @@ class App extends Component {
 		super(props);
 		this.handleServerClick = this.handleServerClick.bind(this);
 		this.getHistory = this.getHistory.bind(this);
+		this.sendName = this.sendName.bind(this);
 		this.state = {
 			showPopup: false
 		};
 	}
-
 
 	handleServerClick(id) {
 		view[0] = id;
@@ -51,7 +58,7 @@ class App extends Component {
 							<Nav servers={servers} allClick={this.handleServerClick} />
 						</Col>
 						<Col md="9">
-							<ServerCards view={view} servers={servers} handleServerClick={this.handleServerClick}></ServerCards>
+							<ServerCards view={view} servers={servers} handleServerClick={this.handleServerClick} sendName={this.sendName}></ServerCards>
 						</Col>
 					</Row>
 				</Container>
@@ -61,6 +68,10 @@ class App extends Component {
 
 	getHistory(type, from, pkey) {
 		getHistoricalData(type, from, pkey);
+	}
+
+	sendName(name, pkey) {
+		sendFriendlyname(name, pkey);
 	}
 
 	componentWillMount() {
