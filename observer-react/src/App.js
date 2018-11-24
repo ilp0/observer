@@ -136,6 +136,19 @@ class App extends Component {
 					
 					return;
 				}
+				if(jn['cmd'] == "SERVICE_CHANGE") {
+					// TODO - receiving
+					/*
+						var rt = {
+							"cmd": "SERVICE_CHANGE",
+							"service": jsn['service'], <-- service name
+							"status": jsn['status'], <-- service status ("active")
+							"pkey": cli.unid,
+							"ip": cli.ipaddr
+						};
+					*/
+					return;
+				}
 
 				s.id = jn['pkey'];
 				s.ip = jn['ip'];

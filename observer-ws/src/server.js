@@ -275,11 +275,15 @@ function parse_message (cli, message) {
                 "cmd": "SERVICE_CHANGE",
                 "service": jsn['service'],
                 "status": jsn['status'],
-                "pkey": cli.unid
+                "pkey": cli.unid,
+                "ip": cli.ipaddr
             };
             client_send(JSON.stringify(rt), "WEB");
-            con.query("INSERT INTO log (type, value, slave_id, timestamp) VALUES ('service_change', " + (jsn['status'] == 'active' ? 1 : 0) + ", " + con.escape(cli.id_in_database) + ", CURRENT_TIMESTAMP)", function (err, result, fields) {
-                
+            console.log("Service change detected!");
+            con.query("INSERT INTO log (type, value, info, slave_id, timestamp) VALUES ('service_change', " + (jsn['status'] == 'active' ? 1 : 0) + ", " + con.escape(jsn['service']) + ", " + con.escape(cli.id_in_database) + ", CURRENT_TIMESTAMP)", function (err, result, fields) {
+                if(err) {
+                    console.log(err);
+                }
             });
         }
     }
