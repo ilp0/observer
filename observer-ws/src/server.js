@@ -390,6 +390,8 @@ function getHistory(slave, from, datatype, callback){
     });
 
 }
+
+
 fs = require('fs');
 var sqlCreds = JSON.parse(fs.readFileSync('.sql-credentials', 'utf8'));
 // Connect to mysql
