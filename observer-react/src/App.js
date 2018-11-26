@@ -9,7 +9,7 @@ let servers = [];
 //VIEW VARIABLE: ONLY FIRST(0) OBJECT IS EVER USED. WEIRD STUFF WITH PASSING DOWN SINGLE VARIABLES. PASSING DOWN ARRAYS SEEMS TO WORK ???
 let view = [];
 
-let ws = new WebSocket("ws://localhost:6152/");
+let ws = new WebSocket("ws://192.168.1.13:6152/");
 
 // Mysql friendly date format
 const _formatdate = function (date) {
