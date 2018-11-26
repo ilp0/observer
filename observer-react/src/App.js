@@ -29,7 +29,8 @@ export const getHistoricalData = function (type, from, pkey) {
 
 //SEND FRIENDLYNAME
 export const sendFriendlyname = function (name, pkey) {
-	ws.send(JSON.stringify({ cmd: "SETN", pkey: pkey}));
+    console.log("sended friendlyname" + name + pkey);
+	ws.send(JSON.stringify({ cmd: "MISC", sub: "SETN", friendlyname: name, pkey: pkey}));
 };
 
 class App extends Component {
