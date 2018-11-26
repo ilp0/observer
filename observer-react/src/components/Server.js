@@ -38,7 +38,9 @@ class Server extends React.Component {
 		this.history_cpu = this.props.history_cpu;
 		this.history_mem = this.props.history_mem;
 		//this.history_date_change = this.history_date_change.bind(this);
-	
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.editName = "";
 	}
 	//EXECUTES METHOD IN SERVERCARDS
 	openServer(){
@@ -56,6 +58,17 @@ class Server extends React.Component {
 		getHistoricalData("mem_us", dd, this.id);
 	}
 	*/
+
+    handleChange(event) {
+
+        this.editName = event.target.value;
+    }
+
+    handleSubmit(event){
+        console.log(this.editName);
+        this.props.sendName(this.editName, this.id);
+    }
+
 	render (){
 
 		if(this.extendedView === "0"){
@@ -86,11 +99,9 @@ class Server extends React.Component {
 				<Popup trigger={<Button>Edit</Button>} modal>
 					<div id="popup-inside">
 						<p>Edit Server Name</p>
-						<Form>
-							<Input type="text" ref="friendlyname" name="friendlyname" placeholder={this.friendlyname} />
-							<br></br>
-							<Button onClick={this.props.sendName(this.refs.friendlyname, this.id)}>Submit</Button>
-						</Form>
+						<Form onSubmit={this.handleSubmit}>
+							<Input type="text" name="friendlyname" onChange={this.handleChange} />
+                            <Input type="submit" value="Submit" /></Form>
 						 
 					</div>
 				</Popup>
