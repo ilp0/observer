@@ -328,6 +328,13 @@ function parse_message (cli, message) {
                 });
                 
             }
+            else if (jsn['cmd'] == "MISC") {
+                if(jsn['sub'] == "SETN") {
+                    let pkey = jsn['pkey'];
+                    let friendlyname = jsn['friendlyname'];
+                    con.query("INSERT INTO slave (friendlyname)" + "VALUES (" + con.escape(friendlyname) + ")" + "WHERE uni_id=" + pkey);
+                    console.log(pkey + " name changed to " + friendlyname);
+                }
         }
     }
 
