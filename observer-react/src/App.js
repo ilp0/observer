@@ -9,7 +9,7 @@ let servers = [];
 //VIEW VARIABLE: ONLY FIRST(0) OBJECT IS EVER USED. WEIRD STUFF WITH PASSING DOWN SINGLE VARIABLES. PASSING DOWN ARRAYS SEEMS TO WORK ???
 let view = [];
 
-let ws = new WebSocket("ws://192.168.1.13:6152/");
+let ws = new WebSocket("ws://shitbox.hevios.com:6152/");
 
 // Mysql friendly date format
 const _formatdate = function (date) {
@@ -151,12 +151,12 @@ class App extends Component {
 				//WHEN SERVICE CHANGES THIS TRIGGERS
 				if(jn['cmd'] == "SERVICE_CHANGE") {
 
-					s.services.map((s, i) => {
-						if(s.services[i] === jn["service"]){
+					s.services.map((ser, i) => {
+						if(ser.name === jn["service"]){
 							if(jn['status'] === "active"){
-								s.services[i].state = 1;
+								ser.state = 1;
 							} else {
-								s.services[i].state = 0;
+								ser.state = 0;
 							}
 							
 						}

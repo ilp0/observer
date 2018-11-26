@@ -40,6 +40,11 @@ h1 {
   width: 100%;
 }
 
+.dateInput{
+  width: 3em;
+  margin-bottom: 1em;
+}
+
 /* POPUP */
 
 #popup-inside {

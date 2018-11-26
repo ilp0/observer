@@ -107,23 +107,33 @@ class Server extends React.Component {
 					</div>
 				</Popup>
 				<Row>
-				<Col lg="5">
+				<Col lg="6">
 					<h3>Memory</h3>
 					<ChartCard data={this.his.mem_us} max={mem_max} title="MB"></ChartCard>
 					
 				</Col>
-				<Col lg="5">
+				<Col lg="6">
 					<h3>CPU</h3>
 					<ChartCard data={this.his.cpu_us} max="100" title="%"></ChartCard>
 					
 				</Col>
-				<Col lg="2">
+				</Row>
+				<Row>
 					<h3>Services</h3>
-					{this.services.map((s, i) => {
-						<p>{s.name} {s.state}</p>
-					})}
-					
-				</Col>
+				</Row>
+				<Row>
+					{this.services.map((s, i) => 
+					<Col lg="3">
+						<div>
+							<Card className="serverCard">
+							<CardHeader>{s.name}</CardHeader>
+							<CardBody>
+								<CardTitle>Status<Alert style={s.state == "1" ? this.colors.green : this.colors.red}>{s.state == "1" ? "ACTIVE" : "OFFLINE"}</Alert></CardTitle>				
+							</CardBody>
+							</Card>
+						</div>
+					</Col>
+					)}
 				</Row>
 				<Row>
 				<h2>History</h2> 
@@ -131,7 +141,8 @@ class Server extends React.Component {
 				<Row>
                 <Col lg="12">
                 <Form>
-                <Input type="date" /><Button>Submit</Button>
+                <Input className="dateInput" type="date" />
+				<Button>Submit</Button>
                 </Form>
 				<p style={{fontSize: 0.8 + 'em'}}>(5h ago -> now)</p> 
 				</Col>
