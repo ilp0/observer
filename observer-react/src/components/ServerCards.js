@@ -25,7 +25,7 @@ class ServerCards extends React.Component {
 				this.state.ser.map((slave, index) =>
 				
 				<Col key={slave.id} lg="4">
-				<Server {...slave} selectServer={this.handleClick} extendedView="0"></Server>
+				<Server {...slave} selectServer={this.handleClick}  extendedView="0" sendName={this.props.sendName}></Server>
 				</Col>
 				)
 			}

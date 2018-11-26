@@ -87,9 +87,9 @@ class Server extends React.Component {
 					<div id="popup-inside">
 						<p>Edit Server Name</p>
 						<Form>
-							<Input type="text" name="friendlyname" placeholder={this.friendlyname} />
+							<Input type="text" ref="friendlyname" name="friendlyname" placeholder={this.friendlyname} />
 							<br></br>
-							<Button>Submit</Button>
+							<Button onClick={this.props.sendName(this.refs.friendlyname, this.id)}>Submit</Button>
 						</Form>
 						 
 					</div>
@@ -110,8 +110,13 @@ class Server extends React.Component {
 				<h2>History</h2> 
 				</Row>
 				<Row>
+                <Col lg="12">
+                <Form>
+                <Input type="date" /><Button>Submit</Button>
+                </Form>
 				<p style={{fontSize: 0.8 + 'em'}}>(5h ago -> now)</p> 
-				</Row>
+				</Col>
+                </Row>
 				<Row>
 				<Col lg="6">
 					<h3>Memory History</h3>
