@@ -315,25 +315,35 @@ function parse_message (cli, message) {
             if(jsn['sub'] == "SERVERS") {
                 var slvs = [];
                 con.query("SELECT * FROM slave", function (err, result, fields) {
-                    for(var i = 0; i < result.length; i++) {
-                        var x = { id: result[i].id, ip: result[i].ip_addr, uni_id: result[i].uni_id, friendlyname: result[i].friendlyname };
-                        slvs.push(x);
-                    }
-                    var jt = {
-                        "cmd": "MISC",
-                        "sub": "SERVERS",
-                        "servers": slvs
-                    };
-                    client_send(JSON.stringify(jt), "SINGLE", cli.unid);
+                    con.query("SELECT slave_id, info, value FROM log WHERE type = 'service_change' AND id IN (SELECT MAX(id) FROM log GROUP BY info, slave_id)", function (ex, rx, fx) {
+                        for(var i = 0; i < result.length; i++) {
+                            let _services = [];
+                            for(var y = 0; y < rx.length; y++) {
+                                if(rx[y].slave_id == result[i].id) {
+                                    _services.push({name: rx[y].info, state: rx[y].value});
+                                }
+                            }
+                            var x = { id: result[i].id, ip: result[i].ip_addr, uni_id: result[i].uni_id, friendlyname: result[i].friendlyname, services: _services };
+                            slvs.push(x);
+                        }
+                        var jt = {
+                            "cmd": "MISC",
+                            "sub": "SERVERS",
+                            "servers": slvs
+                        };
+                        client_send(JSON.stringify(jt), "SINGLE", cli.unid);
+                    });
+                    
                 });
                 
             
-            } else if(jsn['sub'] == "SETN") {
-                    let pkey = jsn['pkey'];
-                    let friendlyname = jsn['friendlyname'];
-                    con.query("UPDATE slave SET friendlyname =" + con.escape(friendlyname) + " WHERE uni_id=" + con.escape(pkey));
-                    console.log(pkey + " name changed to " + friendlyname);
-                }
+            } 
+            else if(jsn['sub'] == "SETN") {
+                let pkey = jsn['pkey'];
+                let friendlyname = jsn['friendlyname'];
+                con.query("UPDATE slave SET friendlyname =" + con.escape(friendlyname) + " WHERE uni_id=" + con.escape(pkey));
+                console.log(pkey + " name changed to " + friendlyname);
+            }
         }
     }
 
@@ -441,8 +451,14 @@ function handle_on_m (cli) {
     cli.conn.on('close', function(connection) {
         console.log("client dc");
         // save db on exit
-        db_save(cli);
-        clients.splice(cli.index, 1);
+        if(cli.type == "TX")
+            db_save(cli);
+        for(let x = 0; x < clients.length; x++) {
+            if(clients[x] == cli) {
+                clients.splice(x, 1);
+                break;
+            }
+        }
         var rt = {
             "cmd": "EVENT",
             "type": "slave_dc",
