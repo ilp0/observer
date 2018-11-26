@@ -315,16 +315,25 @@ function parse_message (cli, message) {
             if(jsn['sub'] == "SERVERS") {
                 var slvs = [];
                 con.query("SELECT * FROM slave", function (err, result, fields) {
-                    for(var i = 0; i < result.length; i++) {
-                        var x = { id: result[i].id, ip: result[i].ip_addr, uni_id: result[i].uni_id, friendlyname: result[i].friendlyname };
-                        slvs.push(x);
-                    }
-                    var jt = {
-                        "cmd": "MISC",
-                        "sub": "SERVERS",
-                        "servers": slvs
-                    };
-                    client_send(JSON.stringify(jt), "SINGLE", cli.unid);
+                    con.query("SELECT slave_id, info, value FROM log WHERE type = 'service_change' AND id IN (SELECT MAX(id) FROM log GROUP BY info, slave_id)", function (ex, rx, fx) {
+                        for(var i = 0; i < result.length; i++) {
+                            let _services = [];
+                            for(var y = 0; y < rx.length; y++) {
+                                if(rx[y].slave_id == result[i].id) {
+                                    _services.push({name: rx[y].info, state: rx[y].value});
+                                }
+                            }
+                            var x = { id: result[i].id, ip: result[i].ip_addr, uni_id: result[i].uni_id, friendlyname: result[i].friendlyname, services: _services };
+                            slvs.push(x);
+                        }
+                        var jt = {
+                            "cmd": "MISC",
+                            "sub": "SERVERS",
+                            "servers": slvs
+                        };
+                        client_send(JSON.stringify(jt), "SINGLE", cli.unid);
+                    });
+                    
                 });
                 
             
