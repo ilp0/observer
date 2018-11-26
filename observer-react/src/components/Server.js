@@ -40,7 +40,8 @@ class Server extends React.Component {
 		//this.history_date_change = this.history_date_change.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.editName = "";
+		this.editName = "";
+		this.services = props.services;
 	}
 	//EXECUTES METHOD IN SERVERCARDS
 	openServer(){
@@ -106,14 +107,21 @@ class Server extends React.Component {
 					</div>
 				</Popup>
 				<Row>
-				<Col lg="6">
+				<Col lg="5">
 					<h3>Memory</h3>
 					<ChartCard data={this.his.mem_us} max={mem_max} title="MB"></ChartCard>
 					
 				</Col>
-				<Col lg="6">
+				<Col lg="5">
 					<h3>CPU</h3>
 					<ChartCard data={this.his.cpu_us} max="100" title="%"></ChartCard>
+					
+				</Col>
+				<Col lg="2">
+					<h3>Services</h3>
+					{this.services.map((s, i) => {
+						<p>{s.name} {s.state}</p>
+					})}
 					
 				</Col>
 				</Row>

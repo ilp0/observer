@@ -101,7 +101,7 @@ class App extends Component {
 
 		//ON ERROR, PRINT IN CONSOLE. SHOULD NOT HAPPEN!
 		ws.onerror = function () {
-			console.log("********CONNECTION LOST!!!!!!!!!!!!!***************");
+			console.log("********CONNECTION LOST!*************");
 		}
 		//ON MESSAGE RECEIVED, PARSE MESSAGE, SHOULD HAPPEN!!
 		ws.onmessage = function (event) {
@@ -112,7 +112,7 @@ class App extends Component {
 					for (let i = 0; i < jn['servers'].length; i++) {
 						let ser = jn['servers'][i];
 						console.log(ser);
-						servers.push({ id: ser.uni_id, ip: ser.ip, friendlyname: ser.friendlyname, his: { mem_us: [], mem_tot: [], cpu_us: [] }, status: "OFFLINE" });
+						servers.push({ id: ser.uni_id, ip: ser.ip, friendlyname: ser.friendlyname, his: { mem_us: [], mem_tot: [], cpu_us: [] }, services: ser.services, status: "OFFLINE" });
 					}
 					return;
 				}
@@ -148,17 +148,20 @@ class App extends Component {
 					
 					return;
 				}
+				//WHEN SERVICE CHANGES THIS TRIGGERS
 				if(jn['cmd'] == "SERVICE_CHANGE") {
-					// TODO - receiving
-					/*
-						var rt = {
-							"cmd": "SERVICE_CHANGE",
-							"service": jsn['service'], <-- service name
-							"status": jsn['status'], <-- service status ("active")
-							"pkey": cli.unid,
-							"ip": cli.ipaddr
-						};
-					*/
+
+					s.services.map((s, i) => {
+						if(s.services[i] === jn["service"]){
+							if(jn['status'] === "active"){
+								s.services[i].state = 1;
+							} else {
+								s.services[i].state = 0;
+							}
+							
+						}
+					});
+					console.log(jn["service"] + " is " + jn['status'] + " in " + jn['pkey']);
 					return;
 				}
 
