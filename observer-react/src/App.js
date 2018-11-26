@@ -19,7 +19,7 @@ const _formatdate = function (date) {
 
 		return a;
 	};
-	return date.getFullYear() + "-" + addz(date.getMonth() + 1) + "-" + addz(date.getDay()) + " " + addz(date.getHours()) + ":" + addz(date.getMinutes()) + ":" + addz(date.getSeconds());
+	return date.getFullYear() + "-" + addz(date.getMonth() + 1) + "-" + addz(date.getDate()) + " " + addz(date.getHours()) + ":" + addz(date.getMinutes()) + ":" + addz(date.getSeconds());
 };
 
 //GET HISTORICAL DATA FROM MYSQL
@@ -136,9 +136,28 @@ class App extends Component {
 				}
 				// Receive history
 				if (jn['cmd'] == "REQH") {
-					console.log("Receiving history data: ");
-					console.log(jn['data']);
-					s.history_cpu = jn['data'];
+					switch(jn['type']) {
+						case "cpu_us":
+							s.history_cpu = jn['data'];
+							break;
+						case "mem_us":
+							s.history_mem = jn['data'];
+							break;
+					}
+					
+					return;
+				}
+				if(jn['cmd'] == "SERVICE_CHANGE") {
+					// TODO - receiving
+					/*
+						var rt = {
+							"cmd": "SERVICE_CHANGE",
+							"service": jsn['service'], <-- service name
+							"status": jsn['status'], <-- service status ("active")
+							"pkey": cli.unid,
+							"ip": cli.ipaddr
+						};
+					*/
 					return;
 				}
 

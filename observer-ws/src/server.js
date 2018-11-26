@@ -269,6 +269,23 @@ function parse_message (cli, message) {
                 db_save(cli);
             }
         }
+        // Service change
+        else if(jsn['cmd'] == "SERVICE_CHANGE") {
+            var rt = {
+                "cmd": "SERVICE_CHANGE",
+                "service": jsn['service'],
+                "status": jsn['status'],
+                "pkey": cli.unid,
+                "ip": cli.ipaddr
+            };
+            client_send(JSON.stringify(rt), "WEB");
+            console.log("Service change detected!");
+            con.query("INSERT INTO log (type, value, info, slave_id, timestamp) VALUES ('service_change', " + (jsn['status'] == 'active' ? 1 : 0) + ", " + con.escape(jsn['service']) + ", " + con.escape(cli.id_in_database) + ", CURRENT_TIMESTAMP)", function (err, result, fields) {
+                if(err) {
+                    console.log(err);
+                }
+            });
+        }
     }
     else if(cli.type == "WB") {
         // service status
@@ -287,6 +304,7 @@ function parse_message (cli, message) {
                 var jt = {
                     "cmd": "REQH",
                     "data": data,
+                    "type": jsn['type'],
                     "pkey": jsn['pkey']
                 };
                 client_send(JSON.stringify(jt), "SINGLE", cli.unid);
@@ -310,6 +328,13 @@ function parse_message (cli, message) {
                 });
                 
             }
+            else if (jsn['cmd'] == "MISC") {
+                if(jsn['sub'] == "SETN") {
+                    let pkey = jsn['pkey'];
+                    let friendlyname = jsn['friendlyname'];
+                    con.query("INSERT INTO slave (friendlyname)" + "VALUES (" + con.escape(friendlyname) + ")" + "WHERE uni_id=" + pkey);
+                    console.log(pkey + " name changed to " + friendlyname);
+                }
         }
     }
 
@@ -359,8 +384,11 @@ function db_save (cli) {
 
 // slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
 function getHistory(slave, from, datatype, callback){
-    con.query("SELECT l.*FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND DATE(l.timestamp) BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC", function (err, result, fields) {
+    let q = "SELECT l.value, l.info, l.timestamp FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND l.timestamp BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC";
+    
+    con.query(q, function (err, result, fields) {
         if(!err) {
+            
             callback(result);
         }
         else {
@@ -369,6 +397,8 @@ function getHistory(slave, from, datatype, callback){
     });
 
 }
+
+
 fs = require('fs');
 var sqlCreds = JSON.parse(fs.readFileSync('.sql-credentials', 'utf8'));
 // Connect to mysql
