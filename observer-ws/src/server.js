@@ -332,9 +332,10 @@ function parse_message (cli, message) {
                 if(jsn['sub'] == "SETN") {
                     let pkey = jsn['pkey'];
                     let friendlyname = jsn['friendlyname'];
-                    con.query("INSERT INTO slave (friendlyname)" + "VALUES (" + con.escape(friendlyname) + ")" + "WHERE uni_id=" + pkey);
+                    con.query("INSERT INTO slave (friendlyname)" + "VALUES (" + con.escape(friendlyname) + ") " + "WHERE uni_id=" + pkey);
                     console.log(pkey + " name changed to " + friendlyname);
                 }
+            }
         }
     }
 
@@ -442,8 +443,14 @@ function handle_on_m (cli) {
     cli.conn.on('close', function(connection) {
         console.log("client dc");
         // save db on exit
-        db_save(cli);
-        clients.splice(cli.index, 1);
+        if(cli.type == "TX")
+            db_save(cli);
+        for(let x = 0; x < clients.length; x++) {
+            if(clients[x] == cli) {
+                clients.splice(x, 1);
+                break;
+            }
+        }
         var rt = {
             "cmd": "EVENT",
             "type": "slave_dc",
