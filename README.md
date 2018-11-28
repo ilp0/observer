@@ -11,13 +11,6 @@ Project for TTMS0500 /  TTMS0900
 - Start backend by running `npm install & npm start` in the observer-ws directory
 - Copy the contents of the observer-react/build/ directory to your web-server
 
-## Todo
-
-- Pitemmän ajan datat
-- Serverien nimeäminen
-- Servicen status näkyviin
-  * Näiden loggaus aina muutoksen tapahtuessa(start, stop)
-
 ## Ajankäyttö ja projektin työstäminen
 ### 27.9.2018
 - Suunnittelua
@@ -51,3 +44,7 @@ Project for TTMS0500 /  TTMS0900
 - Friendlyname display
 ### 23.11.2018
 - Paljon muutoksia, lisäyksiä ja korjauksia koko projektiin.
+### 26.11.2018
+- Service statukset nätisti näkyviin, pieniä backend muutoksia sekä hiomista presentaatiota varten.
+### 27.11.2018
+- Presentaatio TTOS0900 kurssilla.
