@@ -4,7 +4,7 @@ Project for TTMS0500 /  TTMS0900
 
 ## Usage
 
-- Pull repo `git clone https://ilp0/observer.git`
+- Pull repo `git clone https://github.com/ilp0/observer.git`
 - `cd observer`
 - Import the sql database to your mysql/mariadb server.
 - Edit the config file in ------- and insert your mysql server ip, port, desired password.
