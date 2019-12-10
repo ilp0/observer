@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "expo-server-sdk": "^3.4.0",
     "mysql": "^2.16.0",
     "mysql-client": "^0.3.0",
     "websocket": "^1.0.28"

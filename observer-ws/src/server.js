@@ -1,6 +1,10 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var mysql = require('mysql');
+const { Expo } = require('expo-server-sdk');
+
+
+var expo = new Expo();
 
 // Slave authentication string
 var auth_slave = "9xAb3yhJA93hkbOprrw2gG30186km8jg9";
@@ -18,6 +22,7 @@ function client () {
     this.conn = null;
     this.ipaddr = null;
     this.unid = null;
+    this.pushtoken = null; // PUSH message token
     this.id_in_database = null;
     this.index = clients.push(this) - 1; // Push client to "clients" array
     // Data buffer
@@ -59,6 +64,39 @@ function generate_uuid () {
         str += gr[Math.floor(Math.random() * gr.length)];
     }
     return str;
+}
+
+function clients_push_message (body) {
+    let messages = [];
+    for(let c in clients) {
+        if(c.pushtoken != null) {
+            message.push({
+                to: c.pushtoken,
+                sound: 'default',
+                body: body
+            });
+        }
+    }
+    let chunks = expo.chunkPushNotifications(messages);
+    let tickets = [];
+    (async () => {
+    // Send the chunks to the Expo push notification service. There are
+    // different strategies you could use. A simple one is to send one chunk at a
+    // time, which nicely spreads the load out over time:
+    for (let chunk of chunks) {
+        try {
+        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+        console.log(ticketChunk);
+        tickets.push(...ticketChunk);
+        // NOTE: If a ticket contains an error code in ticket.details.error, you
+        // must handle it appropriately. The error codes are listed in the Expo
+        // documentation:
+        // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+        } catch (error) {
+        console.error(error);
+        }
+    }
+    })();
 }
 
 // Send data to clients
@@ -344,6 +382,10 @@ function parse_message (cli, message) {
                 con.query("UPDATE slave SET friendlyname =" + con.escape(friendlyname) + " WHERE uni_id=" + con.escape(pkey));
                 console.log(pkey + " name changed to " + friendlyname);
             }
+            else if(jsn['sub'] == "SETPUSHTOKEN") {
+                cli.pushtoken = jsn['token'];
+                console.log("added push token: " + cli.pushtoken);
+            }
         }
     }
 
@@ -465,6 +507,9 @@ function handle_on_m (cli) {
             "pkey": cli.unid
         };
         client_send(JSON.stringify(rt), "WEB");
+
+        // Send push notifications
+        clients_push_message("Client " + cli.friendlyname + " disconnected!")
     });
 }
 
