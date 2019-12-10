@@ -69,6 +69,7 @@ function generate_uuid () {
 
 function clients_push_message (body) {
     let messages = [];
+    console.log("Pushing messages!");
     for(let p of pushtokens) {
         messages.push({
             to: p,
@@ -384,7 +385,7 @@ function parse_message (cli, message) {
             }
             else if(jsn['sub'] == "SETPUSHTOKEN") {
                 if(!pushtokens.includes(jsn['token'])) {
-                    pushtokens = jsn['token'];
+                    pushtokens.push(jsn['token']);
                     console.log("added push token: " + cli.pushtoken);
                 }
             }
