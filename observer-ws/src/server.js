@@ -68,8 +68,15 @@ function generate_uuid () {
 
 function clients_push_message (body) {
     let messages = [];
+    let tokens = [];
     for(let c of clients) {
         if(c.pushtoken != null) {
+            // Prevent token duplicates
+            if(tokens.includes(c.pushtoken))
+                continue;
+
+	    tokens.push(c.pushtoken);
+
             messages.push({
                 to: c.pushtoken,
                 sound: 'default',

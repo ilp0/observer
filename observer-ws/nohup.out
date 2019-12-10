@@ -189,3 +189,134 @@ DB save
 DB save
 DB save
 DB save
+Starting Observer-server...
+Date: Tue Dec 10 2019 19:16:55 GMT+0200 (Eastern European Standard Time)
+TCP:      [OK]
+MySQL:     [OK]
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+OLD SLAVE!
+Service change detected!
+Service change detected!
+Service change detected!
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+client dc
+DB save
+Added client to push notification list!
+Added client to push notification list!
+Added client to push notification list!
+[ { id: 'f3025fa1-93d4-474e-9f04-c60251eef610', status: 'ok' },
+  { id: '411441e2-f3ea-42e4-b55b-67c7344e6edd', status: 'ok' },
+  { id: '3b3c032a-8b46-4bc8-a6f7-3f5aacd105f2', status: 'ok' } ]
+OLD SLAVE!
+Service change detected!
+Service change detected!
+Service change detected!
+DB save
+DB save
+Starting Observer-server...
+Date: Tue Dec 10 2019 19:20:49 GMT+0200 (Eastern European Standard Time)
+TCP:      [OK]
+MySQL:     [OK]
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+OLD SLAVE!
+Service change detected!
+Service change detected!
+Service change detected!
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+client dc
+DB save
+Added client to push notification list!
+[ { id: '15612558-742b-4757-b980-cdfc8122e9fa', status: 'ok' } ]
+OLD SLAVE!
+Service change detected!
+Service change detected!
+Service change detected!
+client dc
+DB save
+Added client to push notification list!
+OLD SLAVE!
+[ { id: '0e80cf53-a10f-48d6-979c-d6a46a87c7dd', status: 'ok' } ]
+Service change detected!
+Service change detected!
+Service change detected!
+DB save
+DB save
+DB save
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+[ { id: 'a44dc14b-072e-44c9-94f5-1ac6a78c1e08', status: 'ok' } ]
+[ { id: '77cca4ac-dbd3-4dec-87eb-af5cdfa1a157', status: 'ok' } ]
+[ { id: '14953f48-a8e8-4639-b4b4-fe5ad0f532e1', status: 'ok' } ]
+DB save
+added push token: ExponentPushToken[asoxA2KM6AbH_m_2IlpT1W]
+DB save
+client dc
+DB save
+Added client to push notification list!
+OLD SLAVE!
+[ { id: 'c98388f4-232d-4503-b00d-34567e1cdc94', status: 'ok' } ]
+Service change detected!
+Service change detected!
+Service change detected!
+client dc
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+added push token: ExponentPushToken[eSQQe8Mhe1xrW110b_rfmi]
+client dc
+DB save
+Added client to push notification list!
+OLD SLAVE!
+[ { id: '1540692b-6d00-4461-b992-4d58bde7ed1c', status: 'ok' } ]
+Service change detected!
+Service change detected!
+Service change detected!
+client dc
+client dc
+DB save
+OLD SLAVE!
+Service change detected!
+Service change detected!
+Service change detected!
+added push token: ExponentPushToken[eSQQe8Mhe1xrW110b_rfmi]
+added push token: ExponentPushToken[asoxA2KM6AbH_m_2IlpT1W]
+DB save
+client dc
+Added client to push notification list!
+[ { id: '05c95790-a180-4332-8f29-9b6b0192108a', status: 'ok' } ]
+client dc
+DB save
+Added client to push notification list!
+OLD SLAVE!
+[ { id: '20326f9d-421e-4eb8-8c7d-f99730ec8947', status: 'ok' } ]
+Service change detected!
+Service change detected!
+Service change detected!
+client dc
+DB save
+DB save
+added push token: ExponentPushToken[asoxA2KM6AbH_m_2IlpT1W]
+client dc
+DB save
+Added client to push notification list!
+OLD SLAVE!
+[ { id: '7e358494-10ee-4946-9b01-b020288ab3d5', status: 'ok' } ]
+Service change detected!
+Service change detected!
+Service change detected!
+DB save
+DB save
+DB save
+client dc
