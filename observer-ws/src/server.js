@@ -39,6 +39,8 @@ function client () {
     return this;
 }
 
+var pushtokens = [];
+
 // Find client index helper
 function client_find_index (connid) {
     for(var x = 0; x < clients.length; x++) {
@@ -68,22 +70,13 @@ function generate_uuid () {
 
 function clients_push_message (body) {
     let messages = [];
-    let tokens = [];
-    for(let c of clients) {
-        if(c.pushtoken != null) {
-            // Prevent token duplicates
-            if(tokens.includes(c.pushtoken))
-                continue;
-
-	    tokens.push(c.pushtoken);
-
-            messages.push({
-                to: c.pushtoken,
-                sound: 'default',
-                body: body
-            });
-            console.log("Added client to push notification list!");
-        }
+    for(let p of pushtokens) {
+        messages.push({
+            to: p,
+            sound: 'default',
+            body: body
+        });
+        console.log("Added client to push notification list!");
     }
     let chunks = expo.chunkPushNotifications(messages);
     let tickets = [];
@@ -391,8 +384,10 @@ function parse_message (cli, message) {
                 console.log(pkey + " name changed to " + friendlyname);
             }
             else if(jsn['sub'] == "SETPUSHTOKEN") {
-                cli.pushtoken = jsn['token'];
-                console.log("added push token: " + cli.pushtoken);
+                if(!pushtokens.includes(jsn['token'])) {
+                    cli.pushtoken = jsn['token'];
+                    console.log("added push token: " + cli.pushtoken);
+                }
             }
         }
     }
