@@ -1,0 +1,191 @@
+Starting Observer-server...
+Date: Tue Dec 10 2019 18:26:41 GMT+0200 (Eastern European Standard Time)
+TCP:      [OK]
+MySQL:     [OK]
+added push token: ExponentPushToken[8IzUK6O1io1FfIOhESWBOo]
+OLD SLAVE!
+Service change detected!
+Service change detected!
+Service change detected!
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+[ { id: '2a7a78c0-7b64-43a2-99c0-07dc6ad78140', status: 'ok' } ]
+[ { id: '45bd58fc-037a-44ac-95f6-1f24af5fd002', status: 'ok' } ]
+[ { id: '17a1d530-39c5-468d-984f-9d0392732a70', status: 'ok' } ]
+[ { id: 'eee126b8-9303-4a8c-8307-c67149c1a661', status: 'ok' } ]
+[ { id: '51fce8e1-9727-4d30-b73c-dd1a185c084d', status: 'ok' } ]
+[ { id: 'c71eea55-c35e-44d9-af35-0e42636470d2', status: 'ok' } ]
+[ { id: '864d730d-7fa6-4d33-a6a1-e147afa997dd', status: 'ok' } ]
+[ { id: '87bff352-8515-475c-af7d-a3f6c51b2516', status: 'ok' } ]
+[ { id: '4c048b44-4c59-4ed6-a71d-33c9324af9f7', status: 'ok' } ]
+[ { id: '8956a4a4-7a5e-4d3e-9b18-805104b0fe95', status: 'ok' } ]
+[ { id: '0c76e8c1-c866-4cec-84a5-f7f1ab1bf3ad', status: 'ok' } ]
+[ { id: 'c04f63f7-b1ff-4eb8-9ba1-dfbc9dfe0cbc', status: 'ok' } ]
+[ { id: '5c9ca514-b27c-46f6-9aaf-8ffafe1c6613', status: 'ok' } ]
+[ { id: 'a7999d7a-ae39-4be9-bf34-9f090e24406c', status: 'ok' } ]
+[ { id: '50547212-d715-4d1e-aaaa-a758b47d43bd', status: 'ok' } ]
+[ { id: '1f7fb037-7222-4ffa-b29d-64b15c4d34be', status: 'ok' } ]
+[ { id: 'ed142282-fddd-4b4f-8e2e-ed420006bb9c', status: 'ok' } ]
+[ { id: '3118a256-70a0-488d-927c-550a94beef92', status: 'ok' } ]
+[ { id: '55d822a7-b2eb-4e0c-842c-ef6dbe429070', status: 'ok' } ]
+[ { id: '6003f2f7-058a-42af-9e04-f8b183eeb813', status: 'ok' } ]
+[ { id: 'c8446b7a-05eb-42f3-8968-9f4c4c26a249', status: 'ok' } ]
+[ { id: 'ada0f9b8-9538-44db-a7f1-9616f9377aa2', status: 'ok' } ]
+[ { id: 'f6473b81-40cf-48cd-8f62-edf64121582e', status: 'ok' } ]
+[ { id: '5911bdb6-0788-43c9-8ff7-06fd03e8220c', status: 'ok' } ]
+[ { id: '179cfdc8-605b-4290-81c0-54088849710f', status: 'ok' } ]
+[ { id: '3e1fa7c6-3c13-4be5-9782-34e653eff2e7', status: 'ok' } ]
+[ { id: 'f87c79bd-7c70-49cd-bd10-e9f96a63818c', status: 'ok' } ]
+[ { id: '9a32e5c0-e4ce-41bc-99ea-a0f11d51843c', status: 'ok' } ]
+[ { id: '227fd022-788c-4997-872d-d72d4ca278c3', status: 'ok' } ]
+[ { id: '2501c500-6513-44dc-81d5-36804e7bf3b5', status: 'ok' } ]
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+client dc
+Added client to push notification list!
+[ { id: '9f71633f-3c4e-45b8-973a-ced2a95f1a7e', status: 'ok' } ]
+[ { id: '1a5746c0-5a01-46ca-a46a-416fbd7e0c8e', status: 'ok' } ]
+[ { id: '3c3c490c-1534-4e88-be2d-38ff5885f95c', status: 'ok' } ]
+[ { id: 'b6f8f2a9-d3a8-471b-89ce-a30006b7541d', status: 'ok' } ]
+[ { id: 'b3efab37-98f0-4d09-9165-d33c251a47c0', status: 'ok' } ]
+[ { id: '5dacea94-0758-42f6-9e65-4df2cbc684d6', status: 'ok' } ]
+[ { id: '9121416a-074a-466b-a496-417880cedb97', status: 'ok' } ]
+[ { id: 'c7648f18-872e-415b-81ab-46da221c465b', status: 'ok' } ]
+[ { id: 'ed088bc6-06e2-4e69-bd1e-596ec6995218', status: 'ok' } ]
+[ { id: 'a8291ce3-8ee0-4d4a-a55c-14a685b40449', status: 'ok' } ]
+[ { id: '9e7d0764-c787-4a59-8083-4321527a4648', status: 'ok' } ]
+[ { id: '70d77bf0-e56f-4b9b-b4e5-ba2ef5e9f9d4', status: 'ok' } ]
+[ { id: 'a7afec5d-b082-4697-9f21-6514658733d8', status: 'ok' } ]
+[ { id: '188aa366-4844-43de-abc9-a586d70746a8', status: 'ok' } ]
+[ { id: '9a065709-6aa9-4faf-99db-64dd068a7449', status: 'ok' } ]
+[ { id: '46f9bcb5-5df6-4137-9019-b18a7db0b65d', status: 'ok' } ]
+[ { id: '0c8e4686-f347-4c44-a46c-be5d20ec55ef', status: 'ok' } ]
+[ { id: '0b3d6fd6-e53a-4a6c-951e-96a3fc5cae27', status: 'ok' } ]
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
+DB save
