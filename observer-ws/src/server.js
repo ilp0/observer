@@ -504,15 +504,17 @@ function handle_on_m (cli) {
                 break;
             }
         }
-        var rt = {
-            "cmd": "EVENT",
-            "type": "slave_dc",
-            "pkey": cli.unid
-        };
-        client_send(JSON.stringify(rt), "WEB");
-
-        // Send push notifications
-        clients_push_message("Client " + cli.friendlyname + " disconnected!")
+        if(cli.type == "TX") {
+            var rt = {
+                "cmd": "EVENT",
+                "type": "slave_dc",
+                "pkey": cli.unid
+            };
+            client_send(JSON.stringify(rt), "WEB");
+            
+            // Send push notifications
+            clients_push_message("Client " + cli.friendlyname + " disconnected!")
+        }
     });
 }
 
