@@ -70,7 +70,7 @@ function clients_push_message (body) {
     let messages = [];
     for(let c of clients) {
         if(c.pushtoken != null) {
-            message.push({
+            messages.push({
                 to: c.pushtoken,
                 sound: 'default',
                 body: body
