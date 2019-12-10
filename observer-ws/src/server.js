@@ -68,13 +68,14 @@ function generate_uuid () {
 
 function clients_push_message (body) {
     let messages = [];
-    for(let c in clients) {
+    for(let c of clients) {
         if(c.pushtoken != null) {
             message.push({
                 to: c.pushtoken,
                 sound: 'default',
                 body: body
             });
+            console.log("Added client to push notification list!");
         }
     }
     let chunks = expo.chunkPushNotifications(messages);
