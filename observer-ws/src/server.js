@@ -22,7 +22,6 @@ function client () {
     this.conn = null;
     this.ipaddr = null;
     this.unid = null;
-    this.pushtoken = null; // PUSH message token
     this.id_in_database = null;
     this.index = clients.push(this) - 1; // Push client to "clients" array
     // Data buffer
@@ -385,7 +384,7 @@ function parse_message (cli, message) {
             }
             else if(jsn['sub'] == "SETPUSHTOKEN") {
                 if(!pushtokens.includes(jsn['token'])) {
-                    cli.pushtoken = jsn['token'];
+                    pushtokens = jsn['token'];
                     console.log("added push token: " + cli.pushtoken);
                 }
             }
