@@ -469,7 +469,6 @@ console.log("Date: " + new Date());
 con.connect(function(err) {
     if (err) throw err;
     console.log("MySQL:     [OK]");
-    con.end();
 });
 
 function handleDisconnect(conn) {
@@ -484,13 +483,13 @@ function handleDisconnect(conn) {
 
         console.log('Re-connecting lost connection: ' + err.stack);
 
-        connection = mysql.createConnection(conn.config);
-        handleDisconnect(connection);
-        connection.connect();
+        con = mysql.createConnection(conn.config);
+        handleDisconnect(con);
+        con.connect();
     });
 }
   
-handleDisconnect(connection);
+handleDisconnect(con);
 
 // Create HTTP server
 var server = http.createServer(function(request, response) {
@@ -512,9 +511,7 @@ function handle_on_m (cli) {
         }
         // Receiving Text data
         else if (message.type === 'utf8') {
-            con.connect();
             parse_message(cli, message.utf8Data);
-            con.end();
         }
         
     });
@@ -524,9 +521,7 @@ function handle_on_m (cli) {
 
         if(cli.type == "TX")
         {
-            con.connect();
             db_save(cli);
-            con.end();
         }
         for(let x = 0; x < clients.length; x++) {
             if(clients[x] == cli) {
