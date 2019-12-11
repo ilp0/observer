@@ -153,6 +153,7 @@ function parse_message (cli, message) {
     if(jsn == null)
         return false;
 
+    
     // Check if client should identify
     if(cli.auth < 0) {
         // Receiving client authorization
@@ -412,6 +413,7 @@ function db_save (cli) {
         }
         return b/arr.length;
     }
+    
     for (var key in cli.buffer) {
         if (cli.buffer.hasOwnProperty(key)) {
             avg[key] = get_avg(cli.buffer[key]);
@@ -439,7 +441,6 @@ function db_save (cli) {
 // slave = pkey/uni_id, from = date (format 'YYYY-MM-DD hh:ii:ss'), datatype = ex. cpu_us, callback = first parameter is the data
 function getHistory(slave, from, datatype, callback){
     let q = "SELECT l.value, l.info, l.timestamp FROM log l INNER JOIN slave s ON s.uni_id = " + con.escape(slave) + " WHERE type = "+con.escape(datatype)+" AND slave_id = s.id AND l.timestamp BETWEEN "+con.escape(from)+" AND NOW() ORDER BY timestamp ASC";
-    
     con.query(q, function (err, result, fields) {
         if(!err) {
             
@@ -490,15 +491,22 @@ function handle_on_m (cli) {
         }
         // Receiving Text data
         else if (message.type === 'utf8') {
+            con.connect();
             parse_message(cli, message.utf8Data);
+            con.end();
         }
         
     });
     cli.conn.on('close', function(connection) {
         console.log("client dc");
         // save db on exit
+
         if(cli.type == "TX")
+        {
+            con.connect();
             db_save(cli);
+            con.end();
+        }
         for(let x = 0; x < clients.length; x++) {
             if(clients[x] == cli) {
                 clients.splice(x, 1);
