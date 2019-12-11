@@ -218,6 +218,8 @@ function parse_message (cli, message) {
                     });
                 }
 
+                clients_push_message("Host " + cli.friendlyname + " came online");
+
                 return true;
             }
             else if(jsn['auth'] == auth_userclient) {
@@ -325,6 +327,7 @@ function parse_message (cli, message) {
                     console.log(err);
                 }
             });
+            clients_push_message(cli.friendlyname + ": " + jsn['service'] + "  went " + (jsn['status'] == 'active' ? "online" : "offline"));
         }
     }
     else if(cli.type == "WB") {
