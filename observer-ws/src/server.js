@@ -471,6 +471,27 @@ con.connect(function(err) {
     console.log("MySQL:     [OK]");
     con.end();
 });
+
+function handleDisconnect(conn) {
+    conn.on('error', function(err) {
+        if (!err.fatal) {
+        return;
+        }
+
+        if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
+        throw err;
+        }
+
+        console.log('Re-connecting lost connection: ' + err.stack);
+
+        connection = mysql.createConnection(conn.config);
+        handleDisconnect(connection);
+        connection.connect();
+    });
+}
+  
+handleDisconnect(connection);
+
 // Create HTTP server
 var server = http.createServer(function(request, response) {
 
