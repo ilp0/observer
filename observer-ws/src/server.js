@@ -468,6 +468,7 @@ console.log("Date: " + new Date());
 con.connect(function(err) {
     if (err) throw err;
     console.log("MySQL:     [OK]");
+    con.end();
 });
 // Create HTTP server
 var server = http.createServer(function(request, response) {
